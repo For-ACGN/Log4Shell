@@ -17,13 +17,13 @@ import (
 
 func testGenerateConfig() *Config {
 	return &Config{
-		LogOut:         os.Stdout,
-		Hostname:       "127.0.0.1",
-		ClassDirectory: "testdata",
-		HTTPNetwork:    "tcp",
-		HTTPAddress:    "127.0.0.1:8088",
-		LDAPNetwork:    "tcp",
-		LDAPAddress:    "127.0.0.1:389",
+		LogOut:      os.Stdout,
+		Hostname:    "127.0.0.1",
+		PayloadDir:  "testdata",
+		HTTPNetwork: "tcp",
+		HTTPAddress: "127.0.0.1:8088",
+		LDAPNetwork: "tcp",
+		LDAPAddress: "127.0.0.1:389",
 	}
 }
 

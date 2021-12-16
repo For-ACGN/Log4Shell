@@ -19,8 +19,8 @@ import (
 type Config struct {
 	LogOut io.Writer
 
-	Hostname       string
-	ClassDirectory string
+	Hostname   string
+	PayloadDir string
 
 	HTTPNetwork string
 	HTTPAddress string
@@ -72,9 +72,9 @@ func New(cfg *Config) (*Log4j2, error) {
 		return nil, errors.Wrap(err, "failed to create http listener")
 	}
 	httpHandler := httpHandler{
-		logger:   logger,
-		classDir: cfg.ClassDirectory,
-		secret:   secret,
+		logger:     logger,
+		payloadDir: cfg.PayloadDir,
+		secret:     secret,
 	}
 	httpServer := http.Server{
 		Handler:      &httpHandler,
