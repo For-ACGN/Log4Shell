@@ -1,7 +1,7 @@
 # log4j2-exp
  * Check and exploit log4j2 vulnerability with single Go program. 
  * You don't need to install anything except develop it.
- * It support ldaps and https server for other usage.
+ * It supports ldaps and https server for other usage.
 
 ## Run
    ```log4j2-exp.exe -host "VPS IP address"```
