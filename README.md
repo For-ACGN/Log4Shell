@@ -18,8 +18,8 @@
  * will open source after some time
 
 ## VulApp
- * VulApp is a vulnerable Java program that use log4j2 package.\
- * You can use it for develop this project easily.\
+ * VulApp is a vulnerable Java program that use log4j2 package.
+ * You can use it for develop this project easily.
  * ```java -jar vulapp.jar ${jndi:ldap://127.0.0.1/calc.class}```
 
 ## Help
