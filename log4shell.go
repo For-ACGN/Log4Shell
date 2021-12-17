@@ -1,4 +1,4 @@
-package log4j2
+package log4shell
 
 import (
 	"crypto/tls"
@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Config contains configurations about log4j2-exploit server.
+// Config contains configurations about log4shell server.
 type Config struct {
 	LogOut io.Writer
 
@@ -30,9 +30,10 @@ type Config struct {
 	TLSCert   tls.Certificate
 }
 
-// Log4j2 is used to exploit Apache Log4j2 vulnerability easily.
-// It contains ldap and http server.
-type Log4j2 struct {
+// Server is used to create an exploit server that contain
+// a http server and ldap server(can wrap tls), it used to
+// check and exploit Apache Log4j2 vulnerability easily.
+type Server struct {
 	logger    *log.Logger
 	enableTLS bool
 
@@ -48,8 +49,8 @@ type Log4j2 struct {
 	wg sync.WaitGroup
 }
 
-// New is used to create a new log4j2-exploit server.
-func New(cfg *Config) (*Log4j2, error) {
+// New is used to create a new log4shell server.
+func New(cfg *Config) (*Server, error) {
 	logger := log.New(cfg.LogOut, "", log.LstdFlags)
 	ldapserver.Logger = logger
 
@@ -113,8 +114,8 @@ func New(cfg *Config) (*Log4j2, error) {
 	ldapServer.ReadTimeout = time.Minute
 	ldapServer.WriteTimeout = time.Minute
 
-	// create log4j2-exploit server
-	log4j2 := Log4j2{
+	// create log4shell server
+	server := Server{
 		logger:       logger,
 		enableTLS:    cfg.EnableTLS,
 		httpListener: httpListener,
@@ -124,37 +125,37 @@ func New(cfg *Config) (*Log4j2, error) {
 		ldapHandler:  &ldapHandler,
 		ldapServer:   ldapServer,
 	}
-	return &log4j2, nil
+	return &server, nil
 }
 
-// Start is used to start log4j2-exploit server.
-func (log4j2 *Log4j2) Start() error {
-	log4j2.mu.Lock()
-	defer log4j2.mu.Unlock()
+// Start is used to start log4shell server.
+func (srv *Server) Start() error {
+	srv.mu.Lock()
+	defer srv.mu.Unlock()
 
 	errCh := make(chan error, 2)
 	// start http server
-	log4j2.wg.Add(1)
+	srv.wg.Add(1)
 	go func() {
-		defer log4j2.wg.Done()
+		defer srv.wg.Done()
 		var err error
-		if log4j2.enableTLS {
-			err = log4j2.httpServer.ServeTLS(log4j2.httpListener, "", "")
+		if srv.enableTLS {
+			err = srv.httpServer.ServeTLS(srv.httpListener, "", "")
 		} else {
-			err = log4j2.httpServer.Serve(log4j2.httpListener)
+			err = srv.httpServer.Serve(srv.httpListener)
 		}
 		errCh <- err
 	}()
 
 	// start ldap server
-	log4j2.wg.Add(1)
+	srv.wg.Add(1)
 	go func() {
-		defer log4j2.wg.Done()
+		defer srv.wg.Done()
 		var err error
-		if log4j2.enableTLS {
-			err = log4j2.ldapServer.ServeTLS(log4j2.ldapListener)
+		if srv.enableTLS {
+			err = srv.ldapServer.ServeTLS(srv.ldapListener)
 		} else {
-			err = log4j2.ldapServer.Serve(log4j2.ldapListener)
+			err = srv.ldapServer.Serve(srv.ldapListener)
 		}
 		errCh <- err
 	}()
@@ -164,29 +165,29 @@ func (log4j2 *Log4j2) Start() error {
 		return err
 	case <-time.After(250 * time.Millisecond):
 	}
-	log4j2.logger.Println("[info]", "start http server", log4j2.httpListener.Addr())
-	log4j2.logger.Println("[info]", "start ldap server", log4j2.ldapListener.Addr())
-	log4j2.logger.Println("[info]", "start log4j2-exploit server successfully")
+	srv.logger.Println("[info]", "start http server", srv.httpListener.Addr())
+	srv.logger.Println("[info]", "start ldap server", srv.ldapListener.Addr())
+	srv.logger.Println("[info]", "start log4shell server successfully")
 	return nil
 }
 
-// Stop is used to stop log4j2-exploit server.
-func (log4j2 *Log4j2) Stop() error {
-	log4j2.mu.Lock()
-	defer log4j2.mu.Unlock()
+// Stop is used to stop log4shell server.
+func (srv *Server) Stop() error {
+	srv.mu.Lock()
+	defer srv.mu.Unlock()
 
 	// close http server
-	err := log4j2.httpServer.Close()
+	err := srv.httpServer.Close()
 	if err != nil {
 		return errors.Wrap(err, "failed to close http server")
 	}
-	log4j2.logger.Println("[info]", "http server is stopped")
+	srv.logger.Println("[info]", "http server is stopped")
 
 	// close ldap server
-	log4j2.ldapServer.Stop()
-	log4j2.logger.Println("[info]", "ldap server is stopped")
+	srv.ldapServer.Stop()
+	srv.logger.Println("[info]", "ldap server is stopped")
 
-	log4j2.wg.Wait()
-	log4j2.logger.Println("[info]", "log4j2-exploit server is stopped")
+	srv.wg.Wait()
+	srv.logger.Println("[info]", "log4shell server is stopped")
 	return nil
 }

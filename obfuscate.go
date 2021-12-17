@@ -1,4 +1,4 @@
-package log4j2
+package log4shell
 
 import (
 	"math/rand"

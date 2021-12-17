@@ -1,4 +1,4 @@
-module github.com/For-ACGN/log4j2-exp
+module github.com/For-ACGN/Log4Shell
 
 go 1.17
 

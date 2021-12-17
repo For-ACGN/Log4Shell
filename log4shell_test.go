@@ -1,4 +1,4 @@
-package log4j2
+package log4shell
 
 import (
 	"crypto/rand"
@@ -27,7 +27,7 @@ func testGenerateConfig() *Config {
 	}
 }
 
-func TestLog4j2(t *testing.T) {
+func TestLog4Shell(t *testing.T) {
 	server, err := New(testGenerateConfig())
 	require.NoError(t, err)
 
@@ -40,7 +40,7 @@ func TestLog4j2(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestLog4j2TLS(t *testing.T) {
+func TestLog4Shell_TLS(t *testing.T) {
 	_, cert, pri := testGenerateCert(t, "127.0.0.1")
 	crt, err := tls.X509KeyPair(cert, pri)
 	require.NoError(t, err)

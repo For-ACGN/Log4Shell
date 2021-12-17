@@ -1,1 +1,1 @@
-go build -v -trimpath -ldflags "-s -w" -o log4j2-exp.exe
+go build -v -trimpath -ldflags "-s -w" -o Log4Shell.exe

@@ -8,11 +8,11 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/For-ACGN/log4j2-exp"
+	"github.com/For-ACGN/Log4Shell"
 )
 
 var (
-	cfg log4j2.Config
+	cfg log4shell.Config
 	crt string
 	key string
 )
@@ -35,15 +35,15 @@ func init() {
 
 func banner() {
 	fmt.Println()
-	fmt.Println("  :::        ::::::::   ::::::::      :::   ::::::::::: ::::::::  ")
-	fmt.Println("  :+:       :+:    :+: :+:    :+:    :+:        :+:    :+:    :+: ")
-	fmt.Println("  +:+       +:+    +:+ +:+          +:+ +:+     +:+          +:+  ")
-	fmt.Println("  +#+       +#+    +:+ :#:         +#+  +:+     +#+        +#+    ")
-	fmt.Println("  +#+       +#+    +#+ +#+   +#+# +#+#+#+#+#+   +#+      +#+      ")
-	fmt.Println("  #+#       #+#    #+# #+#    #+#       #+# #+# #+#     #+#       ")
-	fmt.Println("  ########## ########   ########        ###  #####     ########## ")
+	fmt.Println("  :::      ::::::::   ::::::::      :::     ::::::::  :::    ::: :::::::::: :::      :::     ")
+	fmt.Println("  :+:     :+:    :+: :+:    :+:    :+:     :+:    :+: :+:    :+: :+:        :+:      :+:     ")
+	fmt.Println("  +:+     +:+    +:+ +:+          +:+ +:+  +:+        +:+    +:+ +:+        +:+      +:+     ")
+	fmt.Println("  +#+     +#+    +:+ :#:         +#+  +:+  +#++:++#++ +#++:++#++ +#++:++#   +#+      +#+     ")
+	fmt.Println("  +#+     +#+    +#+ +#+   +#+# +#+#+#+#+#+       +#+ +#+    +#+ +#+        +#+      +#+     ")
+	fmt.Println("  #+#     #+#    #+# #+#    #+#       #+#  #+#    #+# #+#    #+# #+#        #+#      #+#     ")
+	fmt.Println("  ######## ########   ########        ###   ########  ###    ### ########## ######## ########")
 	fmt.Println()
-	fmt.Println("                           https://github.com/For-ACGN/log4j2-exp")
+	fmt.Println("                                                        https://github.com/For-ACGN/Log4Shell")
 	fmt.Println()
 }
 
@@ -64,13 +64,13 @@ func main() {
 	}
 	cfg.LogOut = os.Stdout
 
-	// start log4j2-exploit server
-	server, err := log4j2.New(&cfg)
+	// start log4shell server
+	server, err := log4shell.New(&cfg)
 	checkError(err)
 	err = server.Start()
 	checkError(err)
 
-	// wait signal for stop log4j2-exploit server
+	// wait signal for stop log4shell server
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt)
 	<-signalCh

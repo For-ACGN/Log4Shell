@@ -1,1 +1,1 @@
-go build -v -trimpath -ldflags "-s -w" -o log4j2-exp
+go build -v -trimpath -ldflags "-s -w" -o log4shell
