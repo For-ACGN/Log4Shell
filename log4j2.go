@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
 	"net"
 	"net/http"
 	"sync"
@@ -63,7 +62,7 @@ func New(cfg *Config) (*Log4j2, error) {
 	}
 
 	// for generate random http handler
-	secret := generateSecret()
+	secret := randString(8)
 
 	// initialize http server
 	httpListener, err := net.Listen(cfg.HTTPNetwork, cfg.HTTPAddress)
@@ -163,7 +162,7 @@ func (log4j2 *Log4j2) Start() error {
 	select {
 	case err := <-errCh:
 		return err
-	case <-time.After(time.Second):
+	case <-time.After(250 * time.Millisecond):
 	}
 	log4j2.logger.Println("[info]", "start http server", log4j2.httpListener.Addr())
 	log4j2.logger.Println("[info]", "start ldap server", log4j2.ldapListener.Addr())
@@ -190,22 +189,4 @@ func (log4j2 *Log4j2) Stop() error {
 	log4j2.wg.Wait()
 	log4j2.logger.Println("[info]", "log4j2-exploit server is stopped")
 	return nil
-}
-
-func generateSecret() string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	str := make([]rune, 8)
-	for i := 0; i < 8; i++ {
-		s := ' ' + 1 + r.Intn(90)
-		switch {
-		case s >= '0' && s <= '9':
-		case s >= 'A' && s <= 'Z':
-		case s >= 'a' && s <= 'z':
-		default:
-			i--
-			continue
-		}
-		str[i] = rune(s)
-	}
-	return string(str)
 }
