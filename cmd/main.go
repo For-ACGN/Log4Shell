@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
@@ -59,8 +58,13 @@ func main() {
 	}
 	// load tls certificate
 	if cfg.EnableTLS {
-		cfg.TLSCert, err = tls.LoadX509KeyPair(crt, key)
+		tlsCert, err := log4shell.TestAutoCert(cfg.Hostname)
 		checkError(err)
+		cfg.TLSCert = *tlsCert
+		fmt.Println("Let's Encrypt sign certificate successfully")
+
+		// cfg.TLSCert, err = tls.LoadX509KeyPair(crt, key)
+		// checkError(err)
 	}
 	cfg.LogOut = os.Stdout
 

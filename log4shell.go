@@ -165,8 +165,14 @@ func (srv *Server) Start() error {
 		return err
 	case <-time.After(250 * time.Millisecond):
 	}
-	srv.logger.Println("[info]", "start http server", srv.httpListener.Addr())
-	srv.logger.Println("[info]", "start ldap server", srv.ldapListener.Addr())
+
+	if srv.enableTLS {
+		srv.logger.Println("[info]", "start https server", srv.httpListener.Addr())
+		srv.logger.Println("[info]", "start ldaps server", srv.ldapListener.Addr())
+	} else {
+		srv.logger.Println("[info]", "start http server", srv.httpListener.Addr())
+		srv.logger.Println("[info]", "start ldap server", srv.ldapListener.Addr())
+	}
 	srv.logger.Println("[info]", "start log4shell server successfully")
 	return nil
 }
