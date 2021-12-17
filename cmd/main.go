@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/For-ACGN/log4j2"
+	"github.com/For-ACGN/log4j2-exp"
 )
 
 var (
@@ -26,7 +26,7 @@ func init() {
 	flag.StringVar(&cfg.HTTPNetwork, "http-net", "tcp", "http server network")
 	flag.StringVar(&cfg.HTTPAddress, "http-addr", ":8080", "http server address")
 	flag.StringVar(&cfg.LDAPNetwork, "ldap-net", "tcp", "ldap server network")
-	flag.StringVar(&cfg.LDAPAddress, "ldap-addr", ":389", "ldap server address")
+	flag.StringVar(&cfg.LDAPAddress, "ldap-addr", ":3890", "ldap server address")
 	flag.BoolVar(&cfg.EnableTLS, "tls-server", false, "enable ldaps and https server")
 	flag.StringVar(&crt, "tls-cert", "cert.pem", "tls certificate file path")
 	flag.StringVar(&key, "tls-key", "key.pem", "tls private key file path")

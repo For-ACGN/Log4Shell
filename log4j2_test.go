@@ -23,7 +23,7 @@ func testGenerateConfig() *Config {
 		HTTPNetwork: "tcp",
 		HTTPAddress: "127.0.0.1:8088",
 		LDAPNetwork: "tcp",
-		LDAPAddress: "127.0.0.1:389",
+		LDAPAddress: "127.0.0.1:3890",
 	}
 }
 

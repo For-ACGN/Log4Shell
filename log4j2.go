@@ -24,7 +24,6 @@ type Config struct {
 
 	HTTPNetwork string
 	HTTPAddress string
-
 	LDAPNetwork string
 	LDAPAddress string
 
