@@ -50,6 +50,7 @@ type Config struct {
 // check and exploit Apache Log4j2 vulnerability easily.
 type Server struct {
 	logger    *log.Logger
+	hostname  string
 	enableTLS bool
 
 	secret string
@@ -162,6 +163,7 @@ func New(cfg *Config) (*Server, error) {
 	// create log4shell server
 	server := Server{
 		logger:       logger,
+		hostname:     cfg.Hostname,
 		enableTLS:    enableTLS,
 		secret:       secret,
 		httpListener: httpListener,
@@ -213,6 +215,8 @@ func (srv *Server) Start() error {
 	case <-time.After(250 * time.Millisecond):
 	}
 
+	srv.logger.Println("[info]", "current hostname:", srv.hostname)
+	srv.logger.Println("[info]", "secret about http handler:", srv.secret)
 	if srv.enableTLS {
 		srv.logger.Println("[info]", "start https server", srv.httpListener.Addr())
 		srv.logger.Println("[info]", "start ldaps server", srv.ldapListener.Addr())
@@ -231,14 +235,22 @@ func (srv *Server) Stop() error {
 
 	// close ldap server
 	srv.ldapServer.Stop()
-	srv.logger.Println("[info]", "ldap server is stopped")
+	if srv.enableTLS {
+		srv.logger.Println("[info]", "ldaps server is stopped")
+	} else {
+		srv.logger.Println("[info]", "ldap server is stopped")
+	}
 
 	// close http server
 	err := srv.httpServer.Close()
 	if err != nil {
 		return errors.Wrap(err, "failed to close http server")
 	}
-	srv.logger.Println("[info]", "http server is stopped")
+	if srv.enableTLS {
+		srv.logger.Println("[info]", "https server is stopped")
+	} else {
+		srv.logger.Println("[info]", "http server is stopped")
+	}
 
 	srv.wg.Wait()
 	srv.logger.Println("[info]", "log4shell server is stopped")
