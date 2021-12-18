@@ -15,6 +15,7 @@ var (
 	cfg log4shell.Config
 	crt string
 	key string
+	obf string
 )
 
 func init() {
@@ -31,6 +32,7 @@ func init() {
 	flag.BoolVar(&cfg.EnableTLS, "tls-server", false, "enable ldaps and https server")
 	flag.StringVar(&crt, "tls-cert", "cert.pem", "tls certificate file path")
 	flag.StringVar(&key, "tls-key", "key.pem", "tls private key file path")
+	flag.StringVar(&obf, "obf", "", "obfuscate malicious(payload) string")
 	flag.Parse()
 }
 
@@ -49,6 +51,12 @@ func banner() {
 }
 
 func main() {
+	// output obfuscated string
+	if obf != "" {
+		fmt.Println(log4shell.Obfuscate(obf))
+		return
+	}
+
 	// load tls certificate
 	if cfg.EnableTLS {
 		cert, err := tls.LoadX509KeyPair(crt, key)
