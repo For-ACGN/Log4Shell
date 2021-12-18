@@ -8,7 +8,10 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func TestAutoCert(domain string) (*tls.Certificate, error) {
+// autoSignCert use a ACME client to send a request to Let's Encrypt.
+// Your Config.Hostname must be domain name, and this program running
+// at the server that IP address will be resolved.
+func autoSignCert(domain string) (*tls.Certificate, error) {
 	const certDir = "autocert"
 
 	err := os.MkdirAll(certDir, 0700)

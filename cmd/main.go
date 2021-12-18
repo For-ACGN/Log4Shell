@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
@@ -26,6 +27,7 @@ func init() {
 	flag.StringVar(&cfg.HTTPAddress, "http-addr", ":8080", "http server address")
 	flag.StringVar(&cfg.LDAPNetwork, "ldap-net", "tcp", "ldap server network")
 	flag.StringVar(&cfg.LDAPAddress, "ldap-addr", ":3890", "ldap server address")
+	flag.BoolVar(&cfg.AutoCert, "auto-cert", false, "use ACME to sign certificate")
 	flag.BoolVar(&cfg.EnableTLS, "tls-server", false, "enable ldaps and https server")
 	flag.StringVar(&crt, "tls-cert", "cert.pem", "tls certificate file path")
 	flag.StringVar(&key, "tls-key", "key.pem", "tls private key file path")
@@ -47,24 +49,11 @@ func banner() {
 }
 
 func main() {
-	// check configuration
-	if cfg.Hostname == "" {
-		log.Fatalln("[error]", "empty host name")
-	}
-	fi, err := os.Stat(cfg.PayloadDir)
-	checkError(err)
-	if !fi.IsDir() {
-		log.Fatalf("[error] \"%s\" is not a directory", cfg.PayloadDir)
-	}
 	// load tls certificate
 	if cfg.EnableTLS {
-		tlsCert, err := log4shell.TestAutoCert(cfg.Hostname)
+		cert, err := tls.LoadX509KeyPair(crt, key)
 		checkError(err)
-		cfg.TLSCert = *tlsCert
-		fmt.Println("Let's Encrypt sign certificate successfully")
-
-		// cfg.TLSCert, err = tls.LoadX509KeyPair(crt, key)
-		// checkError(err)
+		cfg.TLSCert = cert
 	}
 	cfg.LogOut = os.Stdout
 

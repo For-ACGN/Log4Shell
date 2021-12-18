@@ -29,7 +29,7 @@ func TestNewListener(t *testing.T) {
 
 		buf := make([]byte, 4096)
 		n, err := conn.Read(buf)
-		fmt.Println("asdasdads", err)
+		fmt.Println("err:", err)
 		fmt.Println(string(buf[:n]))
 
 		fmt.Println(conn.RemoteAddr())
