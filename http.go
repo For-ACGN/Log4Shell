@@ -40,7 +40,7 @@ func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// prevent arbitrary file read
 	path := sections[2]
-	if strings.Index(path, "../") != -1 || strings.Index(path, "/..") != -1 {
+	if strings.Contains(path, "../") || strings.Contains(path, "/..") {
 		h.logger.Println("[warning]", "found slash in url:", r.RequestURI)
 		return
 	}

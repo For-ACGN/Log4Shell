@@ -98,12 +98,12 @@ func New(cfg *Config) (*Server, error) {
 		}
 		tlsConfig = &tls.Config{
 			Certificates: []tls.Certificate{*cert},
-		}
+		} // #nosec
 		enableTLS = true
 	} else if enableTLS {
 		tlsConfig = &tls.Config{
 			Certificates: []tls.Certificate{cfg.TLSCert},
-		}
+		} // #nosec
 	}
 
 	// generate random string and add it to the http handler

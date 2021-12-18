@@ -10,13 +10,13 @@ func init() {
 }
 
 func randBool() bool {
-	return rand.Int63()%2 == 0
+	return rand.Int63()%2 == 0 // #nosec
 }
 
 func randString(n int) string {
 	str := make([]rune, n)
 	for i := 0; i < n; i++ {
-		s := ' ' + 1 + rand.Intn(90)
+		s := ' ' + 1 + rand.Intn(90) // #nosec
 		switch {
 		case s >= '0' && s <= '9':
 		case s >= 'A' && s <= 'Z':

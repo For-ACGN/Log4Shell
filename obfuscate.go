@@ -39,7 +39,7 @@ func Obfuscate(raw string) string {
 		// first select section length
 		// use 0-3 is used to prevent include special
 		// string like "jndi", "ldap" and "http"
-		size := rand.Intn(4)
+		size := rand.Intn(4) // #nosec
 		if size > remaining {
 			size = remaining
 		}
@@ -69,10 +69,10 @@ func Obfuscate(raw string) string {
 
 		// generate useless data before section
 		obfuscated.WriteString("${")
-		n := 1 + rand.Intn(3) // 1-3
+		n := 1 + rand.Intn(3) // 1-3 // #nosec
 		for i := 0; i < n; i++ {
-			front := randString(2 + rand.Intn(5))
-			end := randString(2 + rand.Intn(5))
+			front := randString(2 + rand.Intn(5)) // #nosec
+			end := randString(2 + rand.Intn(5))   // #nosec
 
 			obfuscated.WriteString(front)
 			if randBool() {
