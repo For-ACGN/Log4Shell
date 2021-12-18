@@ -3,15 +3,15 @@
  * You don't need to install anything except develop it.
 
 ## Usage
- ### Common
+ ### Start LDAP and HTTP server
    * ```Log4Shell.exe -host "1.1.1.1"```
    * ```Log4Shell.exe -host "example.com"```
  
- ### LDAPS and HTTPS server
+ ### Start LDAPS and HTTPS server
    * ```Log4Shell.exe -host "example.com" -tls-server -tls-cert "cert.pem" -tls-key "key.pem"```
    * ```Log4Shell.exe -host "1.1.1.1" -tls-server -tls-cert "cert.pem" -tls-key "key.pem"``` (need IP SANs)
    
- ### LDAPS and HTTPS server with ACME
+ ### Start LDAPS and HTTPS server with ACME
    * ```Log4Shell.exe -host "example.com" -auto-cert``` (must use domain name)
    
  ### Obfuscate malicious(payload) string
