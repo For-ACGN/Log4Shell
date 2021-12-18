@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(&cfg.HTTPAddress, "http-addr", ":8080", "http server address")
 	flag.StringVar(&cfg.LDAPNetwork, "ldap-net", "tcp", "ldap server network")
 	flag.StringVar(&cfg.LDAPAddress, "ldap-addr", ":3890", "ldap server address")
-	flag.BoolVar(&cfg.AutoCert, "auto-cert", false, "use ACME to sign certificate")
+	flag.BoolVar(&cfg.AutoCert, "auto-cert", false, "use ACME client to sign certificate")
 	flag.BoolVar(&cfg.EnableTLS, "tls-server", false, "enable ldaps and https server")
 	flag.StringVar(&crt, "tls-cert", "cert.pem", "tls certificate file path")
 	flag.StringVar(&key, "tls-key", "key.pem", "tls private key file path")
@@ -53,6 +53,7 @@ func banner() {
 func main() {
 	// output obfuscated string
 	if obf != "" {
+		fmt.Println("raw:", obf)
 		fmt.Println(log4shell.Obfuscate(obf))
 		return
 	}
