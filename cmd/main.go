@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"os/signal"
 
@@ -56,18 +55,19 @@ func banner() {
 func main() {
 	// output obfuscated string
 	if rawStr != "" {
+		obfuscated, rwt := log4shell.Obfuscate(rawStr, !noToken)
+		var raw string
 		if noToken {
-			fmt.Printf("raw: %s\n\n%s\n", rawStr, log4shell.Obfuscate(rawStr))
+			raw = rawStr
+		} else {
+			raw = rwt
+		}
+		fmt.Printf("raw: %s\n\n", raw)
+		fmt.Println(obfuscated)
+		if noToken {
 			return
 		}
-
-		front := rawStr[:len(rawStr)-1]
-		token := generateToken()
-		last := string(rawStr[len(rawStr)-1])
-		rawStr = fmt.Sprintf("%s_%s%s", front, token, last)
-		fmt.Printf("raw: %s\n\n%s\n\n", rawStr, log4shell.Obfuscate(rawStr))
-
-		const notice = "[info] each string can only be used once, or wait %d seconds.\n"
+		const notice = "\nEach string can only be used once, or wait %d seconds.\n"
 		fmt.Printf(notice, log4shell.TokenExpireTime)
 		return
 	}
@@ -93,25 +93,6 @@ func main() {
 
 	err = server.Stop()
 	checkError(err)
-}
-
-func generateToken() string {
-	const n = 16
-
-	str := make([]rune, n)
-	for i := 0; i < n; i++ {
-		s := ' ' + 1 + rand.Intn(90) // #nosec
-		switch {
-		case s >= '0' && s <= '9':
-		case s >= 'A' && s <= 'Z':
-		case s >= 'a' && s <= 'z':
-		default:
-			i--
-			continue
-		}
-		str[i] = rune(s)
-	}
-	return string(str)
 }
 
 func checkError(err error) {
