@@ -1,7 +1,7 @@
-public class Main {
+public class Nop {
     static {
         try {
-            Runtime.getRuntime().exec("calc");
+            // Runtime.getRuntime().exec("notepad");
         } catch (Exception e) {
 
         }
