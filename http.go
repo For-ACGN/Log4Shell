@@ -25,14 +25,14 @@ func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	// check url structure
+	// check url structure(/secret/calc.class)
 	sections := strings.SplitN(r.RequestURI, "/", 3)
 	if len(sections) < 3 {
 		h.logger.Println("[error]", "invalid request url structure:", r.RequestURI)
 		return
 	}
 
-	// compare secret
+	// skip first section and compare secret
 	if sections[0] != "" || sections[1] != h.secret {
 		h.logger.Println("[warning]", "invalid secret:", sections[1])
 		return
@@ -44,19 +44,7 @@ func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.logger.Println("[warning]", "found slash in url:", r.RequestURI)
 		return
 	}
-
-	// convert "/secret/calc.class/Main.class" to "/secret/calc.class"
-	//         "/secret/Main.class/other.class" to "/secret/other.class"
-	// path = strings.Replace(path, "Main.class", "", 1)
-	// fmt.Println("path:", path)
-	// path = filepath.Join(h.payloadDir, path)
-
-	idx := strings.LastIndex(path, "/")
-	if idx == -1 {
-		h.logger.Println("[error]", "invalid request url structure:", r.RequestURI)
-		return
-	}
-	path = filepath.Join(h.payloadDir, path[:idx])
+	path = filepath.Join(h.payloadDir, path)
 
 	// read file and send to client
 	class, err := os.ReadFile(path)

