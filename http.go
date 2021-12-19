@@ -25,7 +25,7 @@ func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	// check url structure(/secret/calc.class)
+	// check url structure(/secret/Calc.class)
 	sections := strings.SplitN(r.RequestURI, "/", 3)
 	if len(sections) < 3 {
 		h.logger.Println("[error]", "invalid request url structure:", r.RequestURI)

@@ -53,8 +53,7 @@ func banner() {
 func main() {
 	// output obfuscated string
 	if obf != "" {
-		fmt.Println("raw:", obf)
-		fmt.Println(log4shell.Obfuscate(obf))
+		fmt.Printf("raw: %s\n\n%s\n", obf, log4shell.Obfuscate(obf))
 		return
 	}
 

