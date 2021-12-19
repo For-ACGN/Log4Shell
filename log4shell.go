@@ -264,3 +264,18 @@ func (srv *Server) Stop() error {
 func (srv *Server) Secret() string {
 	return srv.secret
 }
+
+// IsEnableTLS is used to get the log4shell server is enabled TLS.
+func (srv *Server) IsEnableTLS() bool {
+	return srv.enableTLS
+}
+
+// HTTPAddress is used to get the http listener address.
+func (srv *Server) HTTPAddress() string {
+	return srv.httpListener.Addr().String()
+}
+
+// LDAPAddress is used to get the ldap listener address.
+func (srv *Server) LDAPAddress() string {
+	return srv.ldapListener.Addr().String()
+}

