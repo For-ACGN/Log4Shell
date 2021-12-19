@@ -17,7 +17,8 @@ import (
 
 // Config contains configurations about log4shell server.
 type Config struct {
-	LogOut io.Writer
+	// Logger is used to set server logger writer.
+	Logger io.Writer
 
 	// Hostname can be set IP address or domain name,
 	// If enable AutoCert, must set domain name.
@@ -70,8 +71,8 @@ type Server struct {
 // New is used to create a new log4shell server.
 func New(cfg *Config) (*Server, error) {
 	// check configuration
-	if cfg.LogOut == nil {
-		panic("log4shell: Config.LogOut can not be nil")
+	if cfg.Logger == nil {
+		panic("log4shell: Config.Logger can not be nil")
 	}
 	if cfg.Hostname == "" {
 		return nil, errors.New("empty host name")
@@ -84,8 +85,8 @@ func New(cfg *Config) (*Server, error) {
 		return nil, errors.Errorf("\"%s\" is not a directory", cfg.PayloadDir)
 	}
 
-	// set logger
-	logger := log.New(cfg.LogOut, "", log.LstdFlags)
+	// set server logger
+	logger := log.New(cfg.Logger, "", log.LstdFlags)
 	ldapserver.Logger = logger
 
 	// initial tls config
@@ -146,10 +147,10 @@ func New(cfg *Config) (*Server, error) {
 		return nil, errors.WithStack(err)
 	}
 	addr := net.JoinHostPort(cfg.Hostname, port)
-	url := fmt.Sprintf("%s://%s/%s/", scheme, addr, secret)
+	codeBase := fmt.Sprintf("%s://%s/%s/", scheme, addr, secret)
 	ldapHandler := ldapHandler{
-		logger: logger,
-		url:    url,
+		logger:   logger,
+		codeBase: codeBase,
 	}
 	ldapRoute := ldapserver.NewRouteMux()
 	ldapRoute.Bind(ldapHandler.handleBind)

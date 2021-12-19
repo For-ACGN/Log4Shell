@@ -17,7 +17,7 @@ import (
 
 func testGenerateConfig() *Config {
 	return &Config{
-		LogOut:      os.Stdout,
+		Logger:      os.Stdout,
 		Hostname:    "127.0.0.1",
 		PayloadDir:  "testdata",
 		HTTPNetwork: "tcp",

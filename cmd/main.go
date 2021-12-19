@@ -64,7 +64,7 @@ func main() {
 		checkError(err)
 		cfg.TLSCert = cert
 	}
-	cfg.LogOut = os.Stdout
+	cfg.Logger = os.Stdout
 
 	// start log4shell server
 	server, err := log4shell.New(&cfg)
