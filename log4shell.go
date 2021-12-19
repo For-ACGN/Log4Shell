@@ -149,8 +149,10 @@ func New(cfg *Config) (*Server, error) {
 	addr := net.JoinHostPort(cfg.Hostname, port)
 	codeBase := fmt.Sprintf("%s://%s/%s/", scheme, addr, secret)
 	ldapHandler := ldapHandler{
-		logger:   logger,
-		codeBase: codeBase,
+		logger:     logger,
+		payloadDir: cfg.PayloadDir,
+		codeBase:   codeBase,
+		tokens:     make(map[string]int64, 16),
 	}
 	ldapRoute := ldapserver.NewRouteMux()
 	ldapRoute.Bind(ldapHandler.handleBind)
