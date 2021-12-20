@@ -67,6 +67,7 @@ func Obfuscate(raw string, token bool) (string, string) {
 			_, ok := skippedChars[section[i]]
 			if ok {
 				skip = true
+				break
 			}
 		}
 
