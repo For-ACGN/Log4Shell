@@ -13,12 +13,12 @@ import (
 )
 
 var (
-	config   log4shell.Config
-	certFile string
-	keyFile  string
-	rawStr   string
-	noToken  bool
-	dollar   bool
+	config    log4shell.Config
+	certFile  string
+	keyFile   string
+	rawStr    string
+	noToken   bool
+	addDollar bool
 )
 
 func init() {
@@ -37,7 +37,7 @@ func init() {
 	flag.StringVar(&keyFile, "tls-key", "key.pem", "tls private key file path")
 	flag.StringVar(&rawStr, "obf", "", "obfuscate malicious(payload) string")
 	flag.BoolVar(&noToken, "no-token", false, "not add random token when use obfuscate")
-	flag.BoolVar(&dollar, "with-dollar", false, "add one dollar to the obfuscated string")
+	flag.BoolVar(&addDollar, "add-dollar", false, "add one dollar to the obfuscated string")
 	flag.Parse()
 }
 
@@ -104,7 +104,7 @@ func obfuscate() {
 		obfuscated   string
 		rawWithToken string
 	)
-	if dollar {
+	if addDollar {
 		obfuscated, rawWithToken = log4shell.ObfuscateWithDollar(rawStr, !noToken)
 	} else {
 		obfuscated, rawWithToken = log4shell.Obfuscate(rawStr, !noToken)
