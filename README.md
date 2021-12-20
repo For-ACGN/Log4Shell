@@ -3,6 +3,16 @@
  * Support common operating systems, not need install any dependency.
  * Don't need to install anything except you want to develop this project.
 
+## Feature
+ * Only one program and easy deployment
+ * Support multi Java class files
+ * Support LDAPS and HTTPS server
+ * Support ACME to sign certificate
+ * Support obfuscate malicious(payload)
+ * Hide malicious(payload) string
+ * Add secret to protect HTTP server
+ * Add token to fix repeat execute payload
+
 ## Usage
  ### Start Log4Shell server
    * ```Log4Shell.exe -host "1.1.1.1"```
