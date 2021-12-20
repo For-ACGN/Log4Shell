@@ -1,4 +1,5 @@
 # Log4Shell
+ [![GitHub Actions](https://github.com/For-ACGN/Log4Shell/workflows/Go/badge.svg)](https://github.com/For-ACGN/Log4Shell/actions)
  [![Go Report Card](https://goreportcard.com/badge/github.com/For-ACGN/Log4Shell)](https://goreportcard.com/report/github.com/For-ACGN/Log4Shell)
  [![GoDoc](https://godoc.org/github.com/For-ACGN/Log4Shell?status.svg)](http://godoc.org/github.com/For-ACGN/Log4Shell)
  [![License](https://img.shields.io/github/license/For-ACGN/Log4Shell.svg)](https://github.com/For-ACGN/Log4Shell/blob/master/LICENSE)
