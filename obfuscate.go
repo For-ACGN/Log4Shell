@@ -127,3 +127,20 @@ func Obfuscate(raw string, token bool) (string, string) {
 
 	return obfuscated.String(), rwt
 }
+
+// ObfuscateWithDollar will obfuscate malicious(payload) string, and
+// add a dollar symbol before one string like "${xxx-xxx:-section}".
+// When add one Dollar, repeat execute will not appear and the logger
+// will not print the whole obfuscated string, just a little, but I
+// don't know why this happened, It may cause unexpected situations,
+// so it is disabled by default.
+func ObfuscateWithDollar(raw string, token bool) (string, string) {
+	obfuscated, rwt := Obfuscate(raw, token)
+	if strings.Count(obfuscated, "${") < 2 || !strings.Contains(rwt, "$") {
+		return obfuscated, rwt
+	}
+	// add one "$" to before the last "${"
+	idx := strings.LastIndex(obfuscated, "${")
+	obfuscated = obfuscated[:idx] + "$" + obfuscated[idx:]
+	return obfuscated, rwt
+}
