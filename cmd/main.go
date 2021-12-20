@@ -18,6 +18,7 @@ var (
 	keyFile  string
 	rawStr   string
 	noToken  bool
+	dollar   bool
 )
 
 func init() {
@@ -36,6 +37,7 @@ func init() {
 	flag.StringVar(&keyFile, "tls-key", "key.pem", "tls private key file path")
 	flag.StringVar(&rawStr, "obf", "", "obfuscate malicious(payload) string")
 	flag.BoolVar(&noToken, "no-token", false, "not add random token when use obfuscate")
+	flag.BoolVar(&dollar, "with-dollar", false, "add one dollar to the obfuscated string")
 	flag.Parse()
 }
 
@@ -56,20 +58,7 @@ func banner() {
 func main() {
 	// output obfuscated string
 	if rawStr != "" {
-		obfuscated, rwt := log4shell.Obfuscate(rawStr, !noToken)
-		var raw string
-		if noToken {
-			raw = rawStr
-		} else {
-			raw = rwt
-		}
-		fmt.Printf("raw: %s\n\n", raw)
-		fmt.Println(obfuscated)
-		if noToken {
-			return
-		}
-		const notice = "\nEach string can only be used once, or wait %d seconds.\n"
-		fmt.Printf(notice, log4shell.TokenExpireTime)
+		obfuscate()
 		return
 	}
 
@@ -108,6 +97,31 @@ func main() {
 
 	err = server.Stop()
 	checkError(err)
+}
+
+func obfuscate() {
+	var (
+		obfuscated   string
+		rawWithToken string
+	)
+	if dollar {
+		obfuscated, rawWithToken = log4shell.ObfuscateWithDollar(rawStr, !noToken)
+	} else {
+		obfuscated, rawWithToken = log4shell.Obfuscate(rawStr, !noToken)
+	}
+	var raw string
+	if noToken {
+		raw = rawStr
+	} else {
+		raw = rawWithToken
+	}
+	fmt.Printf("raw: %s\n\n", raw)
+	fmt.Println(obfuscated)
+	if noToken {
+		return
+	}
+	const notice = "\nEach string can only be used once, or wait %d seconds.\n"
+	fmt.Printf(notice, log4shell.TokenExpireTime)
 }
 
 func checkError(err error) {
