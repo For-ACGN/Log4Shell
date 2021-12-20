@@ -110,7 +110,7 @@ func New(cfg *Config) (*Server, error) {
 
 	// generate random string and add it to the http handler
 	// for prevent some http spider or exploit server scanner
-	secret := randString(8)
+	secret := randSecret()
 
 	// initialize http server
 	httpListener, err := net.Listen(cfg.HTTPNetwork, cfg.HTTPAddress)

@@ -39,24 +39,24 @@ func (h *ldapHandler) handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Me
 	dn := string(req.BaseObject())
 
 	// check class name has token
-	if strings.Contains(dn, "_") {
+	if strings.Contains(dn, "$") {
 		// parse token
-		sections := strings.SplitN(dn, "_", 2)
+		sections := strings.SplitN(dn, "$", 2)
 		class := sections[0]
 		if class == "" {
 			h.logger.Printf("[warning] %s search invalid java class \"%s\"", addr, dn)
-			h.sendError(w)
+			h.sendErrorResult(w)
 			return
 		}
 		// check token is already exists
 		token := sections[1]
 		if token == "" {
 			h.logger.Printf("[warning] %s search java class with invalid token \"%s\"", addr, dn)
-			h.sendError(w)
+			h.sendErrorResult(w)
 			return
 		}
 		if !h.checkToken(token) {
-			h.sendError(w)
+			h.sendErrorResult(w)
 			return
 		}
 		dn = class
@@ -68,12 +68,12 @@ func (h *ldapHandler) handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Me
 	fi, err := os.Stat(filepath.Join(h.payloadDir, dn+".class"))
 	if err != nil {
 		h.logger.Printf("[error] %s failed to search java class \"%s\": %s", addr, dn, err)
-		h.sendError(w)
+		h.sendErrorResult(w)
 		return
 	}
 	if fi.IsDir() {
 		h.logger.Printf("[error] %s searched java class \"%s\" is a directory", addr, dn)
-		h.sendError(w)
+		h.sendErrorResult(w)
 		return
 	}
 
@@ -108,7 +108,7 @@ func (h *ldapHandler) checkToken(token string) bool {
 	return true
 }
 
-func (h *ldapHandler) sendError(w ldapserver.ResponseWriter) {
+func (h *ldapHandler) sendErrorResult(w ldapserver.ResponseWriter) {
 	done := ldapserver.NewSearchResultDoneResponse(ldapserver.LDAPResultNoSuchObject)
 	w.Write(done)
 }

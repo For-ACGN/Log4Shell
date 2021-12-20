@@ -21,6 +21,39 @@ func randString(n int) string {
 		case s >= '0' && s <= '9':
 		case s >= 'A' && s <= 'Z':
 		case s >= 'a' && s <= 'z':
+		case isValidSymbol(s):
+		default:
+			i--
+			continue
+		}
+		str[i] = rune(s)
+	}
+	return string(str)
+}
+
+func isValidSymbol(s int) bool {
+	switch s {
+	case '(', ')':
+	case '*', '.':
+	case '$', '_':
+	case '[', ']':
+	case '@', '=':
+	default:
+		return false
+	}
+	return true
+}
+
+func randSecret() string {
+	const n = 8
+
+	str := make([]rune, n)
+	for i := 0; i < n; i++ {
+		s := ' ' + 1 + rand.Intn(90) // #nosec
+		switch {
+		case s >= '0' && s <= '9':
+		case s >= 'A' && s <= 'Z':
+		case s >= 'a' && s <= 'z':
 		default:
 			i--
 			continue
