@@ -47,11 +47,19 @@ func Obfuscate(raw string, token bool) (string, string) {
 	remaining := l
 	index := 0
 
+	// prevent generate string like "$${a:Ya]vF:QHL-n[ub8:-}{"
+	// it will make behind string useless
+	lastCharacter := byte(0)
+
 	// prevent not obfuscate twice, otherwise maybe
 	// generate string like 1."jn" 2."di" -> "jndi"
 	lastObfuscated := true
 
 	for {
+		if remaining <= 0 {
+			break
+		}
+
 		// first select section length
 		// use 0-3 is used to prevent include special
 		// string like "jndi", "ldap" and "http"
@@ -61,26 +69,34 @@ func Obfuscate(raw string, token bool) (string, string) {
 		}
 		section := raw[index : index+size]
 
-		// contain special character
-		var skip bool
+		// if section contain special character
+		// not obfuscate them
+		var notObfuscate bool
 		for i := 0; i < len(section); i++ {
 			_, ok := skippedChars[section[i]]
 			if ok {
-				skip = true
+				notObfuscate = true
 				break
 			}
 		}
 
+		// must check last character is "$"
+		// for prevent appear string like "$${"
+		if lastCharacter == '$' {
+			notObfuscate = true
+		}
+
 		// obfuscate or not
-		if skip || (!randBool() && lastObfuscated) {
+		if notObfuscate || (randBool() && lastObfuscated) {
+			if size == 0 {
+				continue
+			}
 			obfuscated.WriteString(section)
 
 			remaining -= size
-			if remaining <= 0 {
-				break
-			}
 			index += size
 			lastObfuscated = false
+			lastCharacter = section[size-1]
 			continue
 		}
 
@@ -104,11 +120,9 @@ func Obfuscate(raw string, token bool) (string, string) {
 		obfuscated.WriteString("}")
 
 		remaining -= size
-		if remaining <= 0 {
-			break
-		}
 		index += size
 		lastObfuscated = true
+		// lastCharacter must be "}"
 	}
 
 	return obfuscated.String(), rwt

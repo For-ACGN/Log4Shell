@@ -54,6 +54,9 @@ func TestObfuscate(t *testing.T) {
 				obfuscated, rwt := Obfuscate(raw, true)
 				require.NotZero(t, rwt)
 				require.NotZero(t, obfuscated)
+
+				// check exist bug "$" with "${"
+				require.NotContains(t, obfuscated, "$${")
 			}
 		})
 
@@ -63,6 +66,9 @@ func TestObfuscate(t *testing.T) {
 				obfuscated, rwt := Obfuscate(raw, false)
 				require.Zero(t, rwt)
 				require.NotZero(t, obfuscated)
+
+				// check exist bug "$" with "${"
+				require.NotContains(t, obfuscated, "$${")
 			}
 		})
 	})
