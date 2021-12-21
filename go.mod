@@ -3,6 +3,7 @@ module github.com/For-ACGN/Log4Shell
 go 1.17
 
 require (
+	github.com/davecgh/go-spew v1.1.1
 	github.com/For-ACGN/ldapserver v1.0.3
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
@@ -12,7 +13,6 @@ require (
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/text v0.3.6 // indirect
