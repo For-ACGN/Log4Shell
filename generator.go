@@ -28,36 +28,36 @@ func GenerateExecuteClass(template []byte, cmd, class string) ([]byte, error) {
 	if classNameIdx == -1 || classNameIdx < 2 {
 		return nil, errors.New("failed to find class name in execute template")
 	}
+
+	// check arguments
 	if cmd == "" {
 		return nil, errors.New("empty command")
+	}
+	if class == "" {
+		class = "Exec"
 	}
 
 	// generate output class file
 	output := bytes.NewBuffer(make([]byte, 0, len(template)+128))
+
 	// change file name
 	output.Write(template[:fileNameIdx-2])
-	if class != "" {
-		fileName := class + ".java"
-		size := beUint16ToBytes(uint16(len(fileName)))
-		output.Write(size)
-		output.WriteString(fileName)
-	} else {
-		output.WriteString("\x00\x09" + fileNameFlag)
-	}
+	fileName := class + ".java"
+	size := beUint16ToBytes(uint16(len(fileName)))
+	output.Write(size)
+	output.WriteString(fileName)
+
 	// change command
 	output.Write(template[fileNameIdx+len(fileNameFlag) : commandIdx-2])
-	size := beUint16ToBytes(uint16(len(cmd)))
+	size = beUint16ToBytes(uint16(len(cmd)))
 	output.Write(size)
 	output.WriteString(cmd)
+
 	// change class name
 	output.Write(template[commandIdx+len(commandFlag) : classNameIdx-2])
-	if class != "" {
-		size := beUint16ToBytes(uint16(len(class)))
-		output.Write(size)
-		output.WriteString(class)
-	} else {
-		output.WriteString("\x00\x04Exec")
-	}
+	size = beUint16ToBytes(uint16(len(class)))
+	output.Write(size)
+	output.WriteString(class)
 	output.Write(template[classNameIdx+len(className)-1:])
 	return output.Bytes(), nil
 }
