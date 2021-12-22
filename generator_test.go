@@ -49,6 +49,20 @@ func TestGenerateExecute(t *testing.T) {
 		require.Equal(t, expected, class)
 	})
 
+	t.Run("invalid template", func(t *testing.T) {
+		t.Run("invalid size", func(t *testing.T) {
+			class, err := GenerateExecute(nil, "", "")
+			require.EqualError(t, err, "invalid Java class template file size")
+			require.Zero(t, class)
+		})
+
+		t.Run("invalid data", func(t *testing.T) {
+			class, err := GenerateExecute(bytes.Repeat([]byte{0x00}, 8), "", "")
+			require.EqualError(t, err, "invalid Java class template file")
+			require.Zero(t, class)
+		})
+	})
+
 	t.Run("empty command", func(t *testing.T) {
 		class, err := GenerateExecute(template, "", "Test")
 		require.EqualError(t, err, "empty command")
@@ -81,6 +95,20 @@ func TestGenerateReverseTCP(t *testing.T) {
 		expected, err := os.ReadFile("testdata/template/compare/ReTCP.class")
 		require.NoError(t, err)
 		require.Equal(t, expected, class)
+	})
+
+	t.Run("invalid template", func(t *testing.T) {
+		t.Run("invalid size", func(t *testing.T) {
+			class, err := GenerateReverseTCP(nil, "", 0, "", "")
+			require.EqualError(t, err, "invalid Java class template file size")
+			require.Zero(t, class)
+		})
+
+		t.Run("invalid data", func(t *testing.T) {
+			class, err := GenerateReverseTCP(bytes.Repeat([]byte{0x00}, 8), "", 0, "", "")
+			require.EqualError(t, err, "invalid Java class template file")
+			require.Zero(t, class)
+		})
 	})
 
 	t.Run("empty host", func(t *testing.T) {
