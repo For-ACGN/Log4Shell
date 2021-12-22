@@ -11,9 +11,9 @@ import (
 // GenerateExecute is used to generate class file with execute command.
 func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 	const (
-		fileNameFlag = "Exec.java"
+		fileNameFlag = "Execute.java"
 		commandFlag  = "${cmd}"
-		className    = "Exec\x01"
+		className    = "Execute\x01"
 		uint16Size   = 2
 	)
 
@@ -36,7 +36,7 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 		return nil, errors.New("empty command")
 	}
 	if class == "" {
-		class = "Exec"
+		class = "Execute"
 	}
 
 	// generate output class file

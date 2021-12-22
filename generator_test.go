@@ -9,7 +9,7 @@ import (
 )
 
 func TestGenerateExecute(t *testing.T) {
-	template, err := os.ReadFile("testdata/template/Exec.class")
+	template, err := os.ReadFile("testdata/template/Execute.class")
 	require.NoError(t, err)
 	spew.Dump(template)
 
