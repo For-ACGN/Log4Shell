@@ -102,8 +102,8 @@ func Obfuscate(raw string, token bool) (string, string) {
 
 		// generate useless data before section
 		obfuscated.WriteString("${")
-		n := 1 + rand.Intn(3) // 1-3 // #nosec
-		for i := 0; i < n; i++ {
+		round := 1 + rand.Intn(3) // 1-3 // #nosec
+		for i := 0; i < round; i++ {
 			front := randString(2 + rand.Intn(5)) // #nosec
 			end := randString(2 + rand.Intn(5))   // #nosec
 
@@ -122,7 +122,7 @@ func Obfuscate(raw string, token bool) (string, string) {
 		remaining -= size
 		index += size
 		lastObfuscated = true
-		// lastCharacter must be "}"
+		lastCharacter = '}' //  lastCharacter must be "}"
 	}
 
 	return obfuscated.String(), rwt

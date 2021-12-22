@@ -142,10 +142,9 @@ func generateClass() {
 		generateExecute()
 	case "reverse_tcp":
 		generateReverseTCP()
-	case "":
-		fmt.Println("supported Java class template: execute, reverse_tcp")
-		return
 	default:
+		fmt.Println("supported Java class template: execute, reverse_tcp")
+		fmt.Println()
 		log.Fatalf("[error] unknown Java class template name: \"%s\"\n", genClass)
 	}
 	fmt.Println("Save generated Java class file to the path:", genOut)
@@ -163,7 +162,7 @@ func generateExecute() {
 
 	if command == "" {
 		args.PrintDefaults()
-		return
+		os.Exit(2)
 	}
 	if gnClass == "" {
 		gnClass = "Execute"
@@ -194,11 +193,11 @@ func generateReverseTCP() {
 
 	if host == "" {
 		args.PrintDefaults()
-		return
+		os.Exit(2)
 	}
 	if port > 65535 {
 		fmt.Println("[error]", "invalid port:", port)
-		return
+		os.Exit(2)
 	}
 	if gnClass == "" {
 		gnClass = "ReverseTCP"

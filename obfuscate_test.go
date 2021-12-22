@@ -56,7 +56,7 @@ func TestObfuscate(t *testing.T) {
 
 	t.Run("fuzz", func(t *testing.T) {
 		t.Run("with token", func(t *testing.T) {
-			for i := 0; i < 100000; i++ {
+			for i := 0; i < 10000; i++ {
 				raw := "${" + randString(64) + "}"
 				obfuscated, rwt := Obfuscate(raw, true)
 				require.NotZero(t, rwt)
@@ -64,11 +64,12 @@ func TestObfuscate(t *testing.T) {
 
 				// check exist bug "$" with "${"
 				require.NotContains(t, obfuscated, "$${")
+				require.NotContains(t, obfuscated, " ")
 			}
 		})
 
 		t.Run("without token", func(t *testing.T) {
-			for i := 0; i < 100000; i++ {
+			for i := 0; i < 10000; i++ {
 				raw := "${" + randString(64) + "}"
 				obfuscated, rwt := Obfuscate(raw, false)
 				require.Zero(t, rwt)
@@ -76,6 +77,7 @@ func TestObfuscate(t *testing.T) {
 
 				// check exist bug "$" with "${"
 				require.NotContains(t, obfuscated, "$${")
+				require.NotContains(t, obfuscated, " ")
 			}
 		})
 	})
@@ -127,24 +129,26 @@ func TestObfuscateWithDollar(t *testing.T) {
 
 	t.Run("fuzz", func(t *testing.T) {
 		t.Run("with token", func(t *testing.T) {
-			for i := 0; i < 100000; i++ {
+			for i := 0; i < 10000; i++ {
 				raw := "${" + randString(64) + "}"
 				obfuscated, rwt := ObfuscateWithDollar(raw, true)
 				require.NotZero(t, rwt)
 				require.NotZero(t, obfuscated)
 
 				require.Equal(t, 1, strings.Count(obfuscated, "$${"))
+				require.NotContains(t, obfuscated, " ")
 			}
 		})
 
 		t.Run("without token", func(t *testing.T) {
-			for i := 0; i < 100000; i++ {
+			for i := 0; i < 10000; i++ {
 				raw := "${" + randString(64) + "}"
 				obfuscated, rwt := ObfuscateWithDollar(raw, false)
 				require.Zero(t, rwt)
 				require.NotZero(t, obfuscated)
 
 				require.NotContains(t, obfuscated, "$${")
+				require.NotContains(t, obfuscated, " ")
 			}
 		})
 	})
