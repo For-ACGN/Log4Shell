@@ -70,6 +70,56 @@ func TestGenerateExecute(t *testing.T) {
 	})
 }
 
+func TestGenerateSystem(t *testing.T) {
+	template, err := os.ReadFile("testdata/template/System.class")
+	require.NoError(t, err)
+	spew.Dump(template)
+
+	t.Run("common", func(t *testing.T) {
+		class, err := GenerateSystem(template, "cmd", "/c whoami", "Test")
+		require.NoError(t, err)
+		spew.Dump(class)
+	})
+
+	t.Run("default class", func(t *testing.T) {
+		class, err := GenerateSystem(template, "${bin}", "${args}", "")
+		require.NoError(t, err)
+		spew.Dump(class)
+
+		require.Equal(t, template, class)
+	})
+
+	t.Run("compare", func(t *testing.T) {
+		class, err := GenerateSystem(template, "cmd", "/c net user", "NetUser")
+		require.NoError(t, err)
+		spew.Dump(class)
+
+		expected, err := os.ReadFile("testdata/template/compare/NetUser.class")
+		require.NoError(t, err)
+		require.Equal(t, expected, class)
+	})
+
+	t.Run("invalid template", func(t *testing.T) {
+		t.Run("invalid size", func(t *testing.T) {
+			class, err := GenerateSystem(nil, "", "", "")
+			require.EqualError(t, err, "invalid Java class template file size")
+			require.Zero(t, class)
+		})
+
+		t.Run("invalid data", func(t *testing.T) {
+			class, err := GenerateSystem(bytes.Repeat([]byte{0x00}, 8), "", "", "")
+			require.EqualError(t, err, "invalid Java class template file")
+			require.Zero(t, class)
+		})
+	})
+
+	t.Run("empty binary", func(t *testing.T) {
+		class, err := GenerateSystem(template, "", "", "Test")
+		require.EqualError(t, err, "empty binary")
+		require.Zero(t, class)
+	})
+}
+
 func TestGenerateReverseTCP(t *testing.T) {
 	template, err := os.ReadFile("testdata/template/ReverseTCP.class")
 	require.NoError(t, err)
