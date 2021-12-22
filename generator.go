@@ -70,7 +70,7 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 	return output.Bytes(), nil
 }
 
-// GenerateSystem is used to generate class file for execute command with arguments .
+// GenerateSystem is used to generate class file for execute command with arguments.
 func GenerateSystem(template []byte, binary, arguments, class string) ([]byte, error) {
 	const (
 		fileNameFlag = "System.java"

