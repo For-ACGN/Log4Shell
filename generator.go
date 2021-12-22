@@ -106,11 +106,11 @@ func GenerateReverseTCP(template []byte, host string, port uint16, token, class 
 	if port == 0 {
 		return nil, errors.New("zero port")
 	}
-	if class == "" {
-		class = "ReverseTCP"
-	}
 	if token == "" {
 		token = randString(8)
+	}
+	if class == "" {
+		class = "ReverseTCP"
 	}
 
 	// generate output class file

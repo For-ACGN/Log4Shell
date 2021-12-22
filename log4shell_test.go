@@ -19,7 +19,7 @@ func testGenerateConfig() *Config {
 	return &Config{
 		Logger:      os.Stdout,
 		Hostname:    "127.0.0.1",
-		PayloadDir:  "testdata",
+		PayloadDir:  "testdata/payload",
 		HTTPNetwork: "tcp",
 		HTTPAddress: "127.0.0.1:8088",
 		LDAPNetwork: "tcp",
