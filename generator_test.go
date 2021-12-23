@@ -174,6 +174,60 @@ func TestGenerateReverseTCP(t *testing.T) {
 	})
 }
 
+func TestGenerateReverseHTTPS(t *testing.T) {
+	template, err := os.ReadFile("testdata/template/ReverseHTTPS.class")
+	require.NoError(t, err)
+	spew.Dump(template)
+
+	t.Run("common", func(t *testing.T) {
+		class, err := GenerateReverseHTTPS(template, "127.0.0.1", 8443, "test", "", "", "Test")
+		require.NoError(t, err)
+		spew.Dump(class)
+	})
+
+	t.Run("default class", func(t *testing.T) {
+		class, err := GenerateReverseHTTPS(template, "127.0.0.1", 8443, "test", "", "", "")
+		require.NoError(t, err)
+		spew.Dump(class)
+	})
+
+	t.Run("compare", func(t *testing.T) {
+		class, err := GenerateReverseHTTPS(template, "127.0.0.1", 8443, "test", "", "test", "ReHTTPS")
+		require.NoError(t, err)
+		spew.Dump(class)
+
+		expected, err := os.ReadFile("testdata/template/compare/ReHTTPS.class")
+		require.NoError(t, err)
+		require.Equal(t, expected, class)
+	})
+
+	t.Run("invalid template", func(t *testing.T) {
+		t.Run("invalid size", func(t *testing.T) {
+			class, err := GenerateReverseHTTPS(nil, "", 0, "", "", "", "")
+			require.EqualError(t, err, "invalid Java class template file size")
+			require.Zero(t, class)
+		})
+
+		t.Run("invalid data", func(t *testing.T) {
+			class, err := GenerateReverseHTTPS(bytes.Repeat([]byte{0x00}, 8), "", 0, "", "", "", "")
+			require.EqualError(t, err, "invalid Java class template file")
+			require.Zero(t, class)
+		})
+	})
+
+	t.Run("empty host", func(t *testing.T) {
+		class, err := GenerateReverseHTTPS(template, "", 1234, "", "", "", "")
+		require.EqualError(t, err, "empty host")
+		require.Zero(t, class)
+	})
+
+	t.Run("zero port", func(t *testing.T) {
+		class, err := GenerateReverseHTTPS(template, "127.0.0.1", 0, "", "", "", "")
+		require.EqualError(t, err, "zero port")
+		require.Zero(t, class)
+	})
+}
+
 func TestGenerateReverseTCP_Fake(t *testing.T) {
 	const (
 		fileNameFlag = "ReverseTCP.java"
